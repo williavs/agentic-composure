@@ -1,0 +1,13 @@
+openai
+mido
+pretty_midi
+pygame
+pyfluidsynth
+sounddevice
+librosa
+python-dotenv
+numpy
+openai-agents
+pydantic
+websocket-client
+soundfile 

@@ -1,0 +1,1483 @@
+[ ![logo](../../assets/logo.svg) ](../.. "OpenAI Agents SDK") OpenAI Agents SDK 
+
+[ openai-agents-python  ](https://github.com/openai/openai-agents-python "Go to repository")
+
+  * [ Intro  ](../..)
+  * [ Quickstart  ](../../quickstart/)
+  * [ Examples  ](../../examples/)
+  * Documentation  Documentation 
+    * [ Agents  ](../../agents/)
+    * [ Running agents  ](../../running_agents/)
+    * [ Results  ](../../results/)
+    * [ Streaming  ](../../streaming/)
+    * [ Tools  ](../../tools/)
+    * [ Model context protocol (MCP)  ](../../mcp/)
+    * [ Handoffs  ](../../handoffs/)
+    * [ Tracing  ](../../tracing/)
+    * [ Context management  ](../../context/)
+    * [ Guardrails  ](../../guardrails/)
+    * [ Orchestrating multiple agents  ](../../multi_agent/)
+    * Models  Models 
+      * [ Models  ](../../models/)
+      * [ Using any model via LiteLLM  ](../../models/litellm/)
+    * [ Configuring the SDK  ](../../config/)
+    * [ Agent Visualization  ](../../visualization/)
+    * Voice agents  Voice agents 
+      * [ Quickstart  ](../../voice/quickstart/)
+      * [ Pipelines and workflows  ](../../voice/pipeline/)
+      * [ Tracing  ](../../voice/tracing/)
+  * API Reference  API Reference 
+    * Agents  Agents 
+      * [ Agents module  ](../)
+      * [ Agents  ](../agent/)
+      * [ Runner  ](../run/)
+      * [ Tools  ](../tool/)
+      * [ Results  ](../result/)
+      * [ Streaming events  ](../stream_events/)
+      * [ Handoffs  ](../handoffs/)
+      * [ Lifecycle  ](../lifecycle/)
+      * Items  [ Items  ](./) Table of contents 
+        * items 
+        * TResponse 
+        * TResponseInputItem 
+        * TResponseOutputItem 
+        * TResponseStreamEvent 
+        * ToolCallItemTypes 
+        * RunItem 
+        * RunItemBase 
+          * agent 
+          * raw_item 
+          * to_input_item 
+        * MessageOutputItem 
+          * raw_item 
+          * agent 
+          * to_input_item 
+        * HandoffCallItem 
+          * raw_item 
+          * agent 
+          * to_input_item 
+        * HandoffOutputItem 
+          * raw_item 
+          * source_agent 
+          * target_agent 
+          * agent 
+          * to_input_item 
+        * ToolCallItem 
+          * raw_item 
+          * agent 
+          * to_input_item 
+        * ToolCallOutputItem 
+          * raw_item 
+          * output 
+          * agent 
+          * to_input_item 
+        * ReasoningItem 
+          * raw_item 
+          * agent 
+          * to_input_item 
+        * ModelResponse 
+          * output 
+          * usage 
+          * response_id 
+          * to_input_items 
+        * ItemHelpers 
+          * extract_last_content 
+          * extract_last_text 
+          * input_to_new_input_list 
+          * text_message_outputs 
+          * text_message_output 
+          * tool_call_output_item 
+      * [ Run context  ](../run_context/)
+      * [ Usage  ](../usage/)
+      * [ Exceptions  ](../exceptions/)
+      * [ Guardrails  ](../guardrail/)
+      * [ Model settings  ](../model_settings/)
+      * [ Agent output  ](../agent_output/)
+      * [ Function schema  ](../function_schema/)
+      * [ Model interface  ](../models/interface/)
+      * [ OpenAI Chat Completions model  ](../models/openai_chatcompletions/)
+      * [ OpenAI Responses model  ](../models/openai_responses/)
+      * [ MCP Servers  ](../mcp/server/)
+      * [ MCP Util  ](../mcp/util/)
+    * Tracing  Tracing 
+      * [ Tracing module  ](../tracing/)
+      * [ Creating traces/spans  ](../tracing/create/)
+      * [ Traces  ](../tracing/traces/)
+      * [ Spans  ](../tracing/spans/)
+      * [ Processor interface  ](../tracing/processor_interface/)
+      * [ Processors  ](../tracing/processors/)
+      * [ Scope  ](../tracing/scope/)
+      * [ Setup  ](../tracing/setup/)
+      * [ Span data  ](../tracing/span_data/)
+      * [ Util  ](../tracing/util/)
+    * Voice  Voice 
+      * [ Pipeline  ](../voice/pipeline/)
+      * [ Workflow  ](../voice/workflow/)
+      * [ Input  ](../voice/input/)
+      * [ Result  ](../voice/result/)
+      * [ Pipeline Config  ](../voice/pipeline_config/)
+      * [ Events  ](../voice/events/)
+      * [ Exceptions  ](../voice/exceptions/)
+      * [ Model  ](../voice/model/)
+      * [ Utils  ](../voice/utils/)
+      * [ OpenAIVoiceModelProvider  ](../voice/models/openai_provider/)
+      * [ OpenAI STT  ](../voice/models/openai_stt/)
+      * [ OpenAI TTS  ](../voice/models/openai_tts/)
+    * Extensions  Extensions 
+      * [ Handoff filters  ](../extensions/handoff_filters/)
+      * [ Handoff prompt  ](../extensions/handoff_prompt/)
+      * [ LiteLLM Models  ](../extensions/litellm/)
+
+
+
+Table of contents 
+
+  * items 
+  * TResponse 
+  * TResponseInputItem 
+  * TResponseOutputItem 
+  * TResponseStreamEvent 
+  * ToolCallItemTypes 
+  * RunItem 
+  * RunItemBase 
+    * agent 
+    * raw_item 
+    * to_input_item 
+  * MessageOutputItem 
+    * raw_item 
+    * agent 
+    * to_input_item 
+  * HandoffCallItem 
+    * raw_item 
+    * agent 
+    * to_input_item 
+  * HandoffOutputItem 
+    * raw_item 
+    * source_agent 
+    * target_agent 
+    * agent 
+    * to_input_item 
+  * ToolCallItem 
+    * raw_item 
+    * agent 
+    * to_input_item 
+  * ToolCallOutputItem 
+    * raw_item 
+    * output 
+    * agent 
+    * to_input_item 
+  * ReasoningItem 
+    * raw_item 
+    * agent 
+    * to_input_item 
+  * ModelResponse 
+    * output 
+    * usage 
+    * response_id 
+    * to_input_items 
+  * ItemHelpers 
+    * extract_last_content 
+    * extract_last_text 
+    * input_to_new_input_list 
+    * text_message_outputs 
+    * text_message_output 
+    * tool_call_output_item 
+
+
+
+# `Items`
+
+###  TResponse `module-attribute`
+    
+    
+    TResponse = Response
+    
+
+A type alias for the Response type from the OpenAI SDK.
+
+###  TResponseInputItem `module-attribute`
+    
+    
+    TResponseInputItem = ResponseInputItemParam
+    
+
+A type alias for the ResponseInputItemParam type from the OpenAI SDK.
+
+###  TResponseOutputItem `module-attribute`
+    
+    
+    TResponseOutputItem = ResponseOutputItem
+    
+
+A type alias for the ResponseOutputItem type from the OpenAI SDK.
+
+###  TResponseStreamEvent `module-attribute`
+    
+    
+    TResponseStreamEvent = ResponseStreamEvent
+    
+
+A type alias for the ResponseStreamEvent type from the OpenAI SDK.
+
+###  ToolCallItemTypes `module-attribute`
+    
+    
+    ToolCallItemTypes: TypeAlias = Union[
+        ResponseFunctionToolCall,
+        ResponseComputerToolCall,
+        ResponseFileSearchToolCall,
+        ResponseFunctionWebSearch,
+    ]
+    
+
+A type that represents a tool call item.
+
+###  RunItem `module-attribute`
+    
+    
+    RunItem: TypeAlias = Union[
+        MessageOutputItem,
+        HandoffCallItem,
+        HandoffOutputItem,
+        ToolCallItem,
+        ToolCallOutputItem,
+        ReasoningItem,
+    ]
+    
+
+An item generated by an agent.
+
+###  RunItemBase `dataclass`
+
+Bases: `Generic[T]`, `ABC`
+
+Source code in `src/agents/items.py`
+    
+    
+    47
+    48
+    49
+    50
+    51
+    52
+    53
+    54
+    55
+    56
+    57
+    58
+    59
+    60
+    61
+    62
+    63
+    64
+    65
+    66
+    67
+
+| 
+    
+    
+    @dataclass
+    class RunItemBase(Generic[T], abc.ABC):
+        agent: Agent[Any]
+        """The agent whose run caused this item to be generated."""
+    
+        raw_item: T
+        """The raw Responses item from the run. This will always be a either an output item (i.e.
+        `openai.types.responses.ResponseOutputItem` or an input item
+        (i.e. `openai.types.responses.ResponseInputItemParam`).
+        """
+    
+        def to_input_item(self) -> TResponseInputItem:
+            """Converts this item into an input item suitable for passing to the model."""
+            if isinstance(self.raw_item, dict):
+                # We know that input items are dicts, so we can ignore the type error
+                return self.raw_item  # type: ignore
+            elif isinstance(self.raw_item, BaseModel):
+                # All output items are Pydantic models that can be converted to input items.
+                return self.raw_item.model_dump(exclude_unset=True)  # type: ignore
+            else:
+                raise AgentsException(f"Unexpected raw item type: {type(self.raw_item)}")
+      
+  
+---|---  
+  
+####  agent `instance-attribute`
+    
+    
+    agent: [Agent](../agent/#agents.agent.Agent "Agent
+    
+    
+      
+          dataclass
+       \(agents.agent.Agent\)")[Any]
+    
+
+The agent whose run caused this item to be generated.
+
+####  raw_item `instance-attribute`
+    
+    
+    raw_item: T
+    
+
+The raw Responses item from the run. This will always be a either an output item (i.e. `openai.types.responses.ResponseOutputItem` or an input item (i.e. `openai.types.responses.ResponseInputItemParam`).
+
+####  to_input_item
+    
+    
+    to_input_item() -> TResponseInputItem
+    
+
+Converts this item into an input item suitable for passing to the model.
+
+Source code in `src/agents/items.py`
+    
+    
+    58
+    59
+    60
+    61
+    62
+    63
+    64
+    65
+    66
+    67
+
+| 
+    
+    
+    def to_input_item(self) -> TResponseInputItem:
+        """Converts this item into an input item suitable for passing to the model."""
+        if isinstance(self.raw_item, dict):
+            # We know that input items are dicts, so we can ignore the type error
+            return self.raw_item  # type: ignore
+        elif isinstance(self.raw_item, BaseModel):
+            # All output items are Pydantic models that can be converted to input items.
+            return self.raw_item.model_dump(exclude_unset=True)  # type: ignore
+        else:
+            raise AgentsException(f"Unexpected raw item type: {type(self.raw_item)}")
+      
+  
+---|---  
+  
+###  MessageOutputItem `dataclass`
+
+Bases: `RunItemBase[ResponseOutputMessage]`
+
+Represents a message from the LLM.
+
+Source code in `src/agents/items.py`
+    
+    
+    70
+    71
+    72
+    73
+    74
+    75
+    76
+    77
+
+| 
+    
+    
+    @dataclass
+    class MessageOutputItem(RunItemBase[ResponseOutputMessage]):
+        """Represents a message from the LLM."""
+    
+        raw_item: ResponseOutputMessage
+        """The raw response output message."""
+    
+        type: Literal["message_output_item"] = "message_output_item"
+      
+  
+---|---  
+  
+####  raw_item `instance-attribute`
+    
+    
+    raw_item: ResponseOutputMessage
+    
+
+The raw response output message.
+
+####  agent `instance-attribute`
+    
+    
+    agent: [Agent](../agent/#agents.agent.Agent "Agent
+    
+    
+      
+          dataclass
+       \(agents.agent.Agent\)")[Any]
+    
+
+The agent whose run caused this item to be generated.
+
+####  to_input_item
+    
+    
+    to_input_item() -> TResponseInputItem
+    
+
+Converts this item into an input item suitable for passing to the model.
+
+Source code in `src/agents/items.py`
+    
+    
+    58
+    59
+    60
+    61
+    62
+    63
+    64
+    65
+    66
+    67
+
+| 
+    
+    
+    def to_input_item(self) -> TResponseInputItem:
+        """Converts this item into an input item suitable for passing to the model."""
+        if isinstance(self.raw_item, dict):
+            # We know that input items are dicts, so we can ignore the type error
+            return self.raw_item  # type: ignore
+        elif isinstance(self.raw_item, BaseModel):
+            # All output items are Pydantic models that can be converted to input items.
+            return self.raw_item.model_dump(exclude_unset=True)  # type: ignore
+        else:
+            raise AgentsException(f"Unexpected raw item type: {type(self.raw_item)}")
+      
+  
+---|---  
+  
+###  HandoffCallItem `dataclass`
+
+Bases: `RunItemBase[ResponseFunctionToolCall]`
+
+Represents a tool call for a handoff from one agent to another.
+
+Source code in `src/agents/items.py`
+    
+    
+    80
+    81
+    82
+    83
+    84
+    85
+    86
+    87
+
+| 
+    
+    
+    @dataclass
+    class HandoffCallItem(RunItemBase[ResponseFunctionToolCall]):
+        """Represents a tool call for a handoff from one agent to another."""
+    
+        raw_item: ResponseFunctionToolCall
+        """The raw response function tool call that represents the handoff."""
+    
+        type: Literal["handoff_call_item"] = "handoff_call_item"
+      
+  
+---|---  
+  
+####  raw_item `instance-attribute`
+    
+    
+    raw_item: ResponseFunctionToolCall
+    
+
+The raw response function tool call that represents the handoff.
+
+####  agent `instance-attribute`
+    
+    
+    agent: [Agent](../agent/#agents.agent.Agent "Agent
+    
+    
+      
+          dataclass
+       \(agents.agent.Agent\)")[Any]
+    
+
+The agent whose run caused this item to be generated.
+
+####  to_input_item
+    
+    
+    to_input_item() -> TResponseInputItem
+    
+
+Converts this item into an input item suitable for passing to the model.
+
+Source code in `src/agents/items.py`
+    
+    
+    58
+    59
+    60
+    61
+    62
+    63
+    64
+    65
+    66
+    67
+
+| 
+    
+    
+    def to_input_item(self) -> TResponseInputItem:
+        """Converts this item into an input item suitable for passing to the model."""
+        if isinstance(self.raw_item, dict):
+            # We know that input items are dicts, so we can ignore the type error
+            return self.raw_item  # type: ignore
+        elif isinstance(self.raw_item, BaseModel):
+            # All output items are Pydantic models that can be converted to input items.
+            return self.raw_item.model_dump(exclude_unset=True)  # type: ignore
+        else:
+            raise AgentsException(f"Unexpected raw item type: {type(self.raw_item)}")
+      
+  
+---|---  
+  
+###  HandoffOutputItem `dataclass`
+
+Bases: `RunItemBase[TResponseInputItem]`
+
+Represents the output of a handoff.
+
+Source code in `src/agents/items.py`
+    
+    
+     90
+     91
+     92
+     93
+     94
+     95
+     96
+     97
+     98
+     99
+    100
+    101
+    102
+    103
+
+| 
+    
+    
+    @dataclass
+    class HandoffOutputItem(RunItemBase[TResponseInputItem]):
+        """Represents the output of a handoff."""
+    
+        raw_item: TResponseInputItem
+        """The raw input item that represents the handoff taking place."""
+    
+        source_agent: Agent[Any]
+        """The agent that made the handoff."""
+    
+        target_agent: Agent[Any]
+        """The agent that is being handed off to."""
+    
+        type: Literal["handoff_output_item"] = "handoff_output_item"
+      
+  
+---|---  
+  
+####  raw_item `instance-attribute`
+    
+    
+    raw_item: TResponseInputItem
+    
+
+The raw input item that represents the handoff taking place.
+
+####  source_agent `instance-attribute`
+    
+    
+    source_agent: [Agent](../agent/#agents.agent.Agent "Agent
+    
+    
+      
+          dataclass
+       \(agents.agent.Agent\)")[Any]
+    
+
+The agent that made the handoff.
+
+####  target_agent `instance-attribute`
+    
+    
+    target_agent: [Agent](../agent/#agents.agent.Agent "Agent
+    
+    
+      
+          dataclass
+       \(agents.agent.Agent\)")[Any]
+    
+
+The agent that is being handed off to.
+
+####  agent `instance-attribute`
+    
+    
+    agent: [Agent](../agent/#agents.agent.Agent "Agent
+    
+    
+      
+          dataclass
+       \(agents.agent.Agent\)")[Any]
+    
+
+The agent whose run caused this item to be generated.
+
+####  to_input_item
+    
+    
+    to_input_item() -> TResponseInputItem
+    
+
+Converts this item into an input item suitable for passing to the model.
+
+Source code in `src/agents/items.py`
+    
+    
+    58
+    59
+    60
+    61
+    62
+    63
+    64
+    65
+    66
+    67
+
+| 
+    
+    
+    def to_input_item(self) -> TResponseInputItem:
+        """Converts this item into an input item suitable for passing to the model."""
+        if isinstance(self.raw_item, dict):
+            # We know that input items are dicts, so we can ignore the type error
+            return self.raw_item  # type: ignore
+        elif isinstance(self.raw_item, BaseModel):
+            # All output items are Pydantic models that can be converted to input items.
+            return self.raw_item.model_dump(exclude_unset=True)  # type: ignore
+        else:
+            raise AgentsException(f"Unexpected raw item type: {type(self.raw_item)}")
+      
+  
+---|---  
+  
+###  ToolCallItem `dataclass`
+
+Bases: `RunItemBase[ToolCallItemTypes]`
+
+Represents a tool call e.g. a function call or computer action call.
+
+Source code in `src/agents/items.py`
+    
+    
+    115
+    116
+    117
+    118
+    119
+    120
+    121
+    122
+
+| 
+    
+    
+    @dataclass
+    class ToolCallItem(RunItemBase[ToolCallItemTypes]):
+        """Represents a tool call e.g. a function call or computer action call."""
+    
+        raw_item: ToolCallItemTypes
+        """The raw tool call item."""
+    
+        type: Literal["tool_call_item"] = "tool_call_item"
+      
+  
+---|---  
+  
+####  raw_item `instance-attribute`
+    
+    
+    raw_item: ToolCallItemTypes
+    
+
+The raw tool call item.
+
+####  agent `instance-attribute`
+    
+    
+    agent: [Agent](../agent/#agents.agent.Agent "Agent
+    
+    
+      
+          dataclass
+       \(agents.agent.Agent\)")[Any]
+    
+
+The agent whose run caused this item to be generated.
+
+####  to_input_item
+    
+    
+    to_input_item() -> TResponseInputItem
+    
+
+Converts this item into an input item suitable for passing to the model.
+
+Source code in `src/agents/items.py`
+    
+    
+    58
+    59
+    60
+    61
+    62
+    63
+    64
+    65
+    66
+    67
+
+| 
+    
+    
+    def to_input_item(self) -> TResponseInputItem:
+        """Converts this item into an input item suitable for passing to the model."""
+        if isinstance(self.raw_item, dict):
+            # We know that input items are dicts, so we can ignore the type error
+            return self.raw_item  # type: ignore
+        elif isinstance(self.raw_item, BaseModel):
+            # All output items are Pydantic models that can be converted to input items.
+            return self.raw_item.model_dump(exclude_unset=True)  # type: ignore
+        else:
+            raise AgentsException(f"Unexpected raw item type: {type(self.raw_item)}")
+      
+  
+---|---  
+  
+###  ToolCallOutputItem `dataclass`
+
+Bases: `RunItemBase[Union[FunctionCallOutput, ComputerCallOutput]]`
+
+Represents the output of a tool call.
+
+Source code in `src/agents/items.py`
+    
+    
+    125
+    126
+    127
+    128
+    129
+    130
+    131
+    132
+    133
+    134
+    135
+    136
+    137
+
+| 
+    
+    
+    @dataclass
+    class ToolCallOutputItem(RunItemBase[Union[FunctionCallOutput, ComputerCallOutput]]):
+        """Represents the output of a tool call."""
+    
+        raw_item: FunctionCallOutput | ComputerCallOutput
+        """The raw item from the model."""
+    
+        output: Any
+        """The output of the tool call. This is whatever the tool call returned; the `raw_item`
+        contains a string representation of the output.
+        """
+    
+        type: Literal["tool_call_output_item"] = "tool_call_output_item"
+      
+  
+---|---  
+  
+####  raw_item `instance-attribute`
+    
+    
+    raw_item: FunctionCallOutput | ComputerCallOutput
+    
+
+The raw item from the model.
+
+####  output `instance-attribute`
+    
+    
+    output: Any
+    
+
+The output of the tool call. This is whatever the tool call returned; the `raw_item` contains a string representation of the output.
+
+####  agent `instance-attribute`
+    
+    
+    agent: [Agent](../agent/#agents.agent.Agent "Agent
+    
+    
+      
+          dataclass
+       \(agents.agent.Agent\)")[Any]
+    
+
+The agent whose run caused this item to be generated.
+
+####  to_input_item
+    
+    
+    to_input_item() -> TResponseInputItem
+    
+
+Converts this item into an input item suitable for passing to the model.
+
+Source code in `src/agents/items.py`
+    
+    
+    58
+    59
+    60
+    61
+    62
+    63
+    64
+    65
+    66
+    67
+
+| 
+    
+    
+    def to_input_item(self) -> TResponseInputItem:
+        """Converts this item into an input item suitable for passing to the model."""
+        if isinstance(self.raw_item, dict):
+            # We know that input items are dicts, so we can ignore the type error
+            return self.raw_item  # type: ignore
+        elif isinstance(self.raw_item, BaseModel):
+            # All output items are Pydantic models that can be converted to input items.
+            return self.raw_item.model_dump(exclude_unset=True)  # type: ignore
+        else:
+            raise AgentsException(f"Unexpected raw item type: {type(self.raw_item)}")
+      
+  
+---|---  
+  
+###  ReasoningItem `dataclass`
+
+Bases: `RunItemBase[ResponseReasoningItem]`
+
+Represents a reasoning item.
+
+Source code in `src/agents/items.py`
+    
+    
+    140
+    141
+    142
+    143
+    144
+    145
+    146
+    147
+
+| 
+    
+    
+    @dataclass
+    class ReasoningItem(RunItemBase[ResponseReasoningItem]):
+        """Represents a reasoning item."""
+    
+        raw_item: ResponseReasoningItem
+        """The raw reasoning item."""
+    
+        type: Literal["reasoning_item"] = "reasoning_item"
+      
+  
+---|---  
+  
+####  raw_item `instance-attribute`
+    
+    
+    raw_item: ResponseReasoningItem
+    
+
+The raw reasoning item.
+
+####  agent `instance-attribute`
+    
+    
+    agent: [Agent](../agent/#agents.agent.Agent "Agent
+    
+    
+      
+          dataclass
+       \(agents.agent.Agent\)")[Any]
+    
+
+The agent whose run caused this item to be generated.
+
+####  to_input_item
+    
+    
+    to_input_item() -> TResponseInputItem
+    
+
+Converts this item into an input item suitable for passing to the model.
+
+Source code in `src/agents/items.py`
+    
+    
+    58
+    59
+    60
+    61
+    62
+    63
+    64
+    65
+    66
+    67
+
+| 
+    
+    
+    def to_input_item(self) -> TResponseInputItem:
+        """Converts this item into an input item suitable for passing to the model."""
+        if isinstance(self.raw_item, dict):
+            # We know that input items are dicts, so we can ignore the type error
+            return self.raw_item  # type: ignore
+        elif isinstance(self.raw_item, BaseModel):
+            # All output items are Pydantic models that can be converted to input items.
+            return self.raw_item.model_dump(exclude_unset=True)  # type: ignore
+        else:
+            raise AgentsException(f"Unexpected raw item type: {type(self.raw_item)}")
+      
+  
+---|---  
+  
+###  ModelResponse `dataclass`
+
+Source code in `src/agents/items.py`
+    
+    
+    161
+    162
+    163
+    164
+    165
+    166
+    167
+    168
+    169
+    170
+    171
+    172
+    173
+    174
+    175
+    176
+    177
+    178
+    179
+    180
+    181
+
+| 
+    
+    
+    @dataclass
+    class ModelResponse:
+        output: list[TResponseOutputItem]
+        """A list of outputs (messages, tool calls, etc) generated by the model"""
+    
+        usage: Usage
+        """The usage information for the response."""
+    
+        response_id: str | None
+        """An ID for the response which can be used to refer to the response in subsequent calls to the
+        model. Not supported by all model providers.
+        If using OpenAI models via the Responses API, this is the `response_id` parameter, and it can
+        be passed to `Runner.run`.
+        """
+    
+        def to_input_items(self) -> list[TResponseInputItem]:
+            """Convert the output into a list of input items suitable for passing to the model."""
+            # We happen to know that the shape of the Pydantic output items are the same as the
+            # equivalent TypedDict input items, so we can just convert each one.
+            # This is also tested via unit tests.
+            return [it.model_dump(exclude_unset=True) for it in self.output]  # type: ignore
+      
+  
+---|---  
+  
+####  output `instance-attribute`
+    
+    
+    output: list[TResponseOutputItem]
+    
+
+A list of outputs (messages, tool calls, etc) generated by the model
+
+####  usage `instance-attribute`
+    
+    
+    usage: [Usage](../usage/#agents.usage.Usage "Usage
+    
+    
+      
+          dataclass
+       \(agents.usage.Usage\)")
+    
+
+The usage information for the response.
+
+####  response_id `instance-attribute`
+    
+    
+    response_id: str | None
+    
+
+An ID for the response which can be used to refer to the response in subsequent calls to the model. Not supported by all model providers. If using OpenAI models via the Responses API, this is the `response_id` parameter, and it can be passed to `Runner.run`.
+
+####  to_input_items
+    
+    
+    to_input_items() -> list[TResponseInputItem]
+    
+
+Convert the output into a list of input items suitable for passing to the model.
+
+Source code in `src/agents/items.py`
+    
+    
+    176
+    177
+    178
+    179
+    180
+    181
+
+| 
+    
+    
+    def to_input_items(self) -> list[TResponseInputItem]:
+        """Convert the output into a list of input items suitable for passing to the model."""
+        # We happen to know that the shape of the Pydantic output items are the same as the
+        # equivalent TypedDict input items, so we can just convert each one.
+        # This is also tested via unit tests.
+        return [it.model_dump(exclude_unset=True) for it in self.output]  # type: ignore
+      
+  
+---|---  
+  
+###  ItemHelpers
+
+Source code in `src/agents/items.py`
+    
+    
+    184
+    185
+    186
+    187
+    188
+    189
+    190
+    191
+    192
+    193
+    194
+    195
+    196
+    197
+    198
+    199
+    200
+    201
+    202
+    203
+    204
+    205
+    206
+    207
+    208
+    209
+    210
+    211
+    212
+    213
+    214
+    215
+    216
+    217
+    218
+    219
+    220
+    221
+    222
+    223
+    224
+    225
+    226
+    227
+    228
+    229
+    230
+    231
+    232
+    233
+    234
+    235
+    236
+    237
+    238
+    239
+    240
+    241
+    242
+    243
+    244
+    245
+    246
+    247
+    248
+    249
+    250
+
+| 
+    
+    
+    class ItemHelpers:
+        @classmethod
+        def extract_last_content(cls, message: TResponseOutputItem) -> str:
+            """Extracts the last text content or refusal from a message."""
+            if not isinstance(message, ResponseOutputMessage):
+                return ""
+    
+            last_content = message.content[-1]
+            if isinstance(last_content, ResponseOutputText):
+                return last_content.text
+            elif isinstance(last_content, ResponseOutputRefusal):
+                return last_content.refusal
+            else:
+                raise ModelBehaviorError(f"Unexpected content type: {type(last_content)}")
+    
+        @classmethod
+        def extract_last_text(cls, message: TResponseOutputItem) -> str | None:
+            """Extracts the last text content from a message, if any. Ignores refusals."""
+            if isinstance(message, ResponseOutputMessage):
+                last_content = message.content[-1]
+                if isinstance(last_content, ResponseOutputText):
+                    return last_content.text
+    
+            return None
+    
+        @classmethod
+        def input_to_new_input_list(
+            cls, input: str | list[TResponseInputItem]
+        ) -> list[TResponseInputItem]:
+            """Converts a string or list of input items into a list of input items."""
+            if isinstance(input, str):
+                return [
+                    {
+                        "content": input,
+                        "role": "user",
+                    }
+                ]
+            return copy.deepcopy(input)
+    
+        @classmethod
+        def text_message_outputs(cls, items: list[RunItem]) -> str:
+            """Concatenates all the text content from a list of message output items."""
+            text = ""
+            for item in items:
+                if isinstance(item, MessageOutputItem):
+                    text += cls.text_message_output(item)
+            return text
+    
+        @classmethod
+        def text_message_output(cls, message: MessageOutputItem) -> str:
+            """Extracts all the text content from a single message output item."""
+            text = ""
+            for item in message.raw_item.content:
+                if isinstance(item, ResponseOutputText):
+                    text += item.text
+            return text
+    
+        @classmethod
+        def tool_call_output_item(
+            cls, tool_call: ResponseFunctionToolCall, output: str
+        ) -> FunctionCallOutput:
+            """Creates a tool call output item from a tool call and its output."""
+            return {
+                "call_id": tool_call.call_id,
+                "output": output,
+                "type": "function_call_output",
+            }
+      
+  
+---|---  
+  
+####  extract_last_content `classmethod`
+    
+    
+    extract_last_content(message: TResponseOutputItem) -> str
+    
+
+Extracts the last text content or refusal from a message.
+
+Source code in `src/agents/items.py`
+    
+    
+    185
+    186
+    187
+    188
+    189
+    190
+    191
+    192
+    193
+    194
+    195
+    196
+    197
+
+| 
+    
+    
+    @classmethod
+    def extract_last_content(cls, message: TResponseOutputItem) -> str:
+        """Extracts the last text content or refusal from a message."""
+        if not isinstance(message, ResponseOutputMessage):
+            return ""
+    
+        last_content = message.content[-1]
+        if isinstance(last_content, ResponseOutputText):
+            return last_content.text
+        elif isinstance(last_content, ResponseOutputRefusal):
+            return last_content.refusal
+        else:
+            raise ModelBehaviorError(f"Unexpected content type: {type(last_content)}")
+      
+  
+---|---  
+  
+####  extract_last_text `classmethod`
+    
+    
+    extract_last_text(
+        message: TResponseOutputItem,
+    ) -> str | None
+    
+
+Extracts the last text content from a message, if any. Ignores refusals.
+
+Source code in `src/agents/items.py`
+    
+    
+    199
+    200
+    201
+    202
+    203
+    204
+    205
+    206
+    207
+
+| 
+    
+    
+    @classmethod
+    def extract_last_text(cls, message: TResponseOutputItem) -> str | None:
+        """Extracts the last text content from a message, if any. Ignores refusals."""
+        if isinstance(message, ResponseOutputMessage):
+            last_content = message.content[-1]
+            if isinstance(last_content, ResponseOutputText):
+                return last_content.text
+    
+        return None
+      
+  
+---|---  
+  
+####  input_to_new_input_list `classmethod`
+    
+    
+    input_to_new_input_list(
+        input: str | list[TResponseInputItem],
+    ) -> list[TResponseInputItem]
+    
+
+Converts a string or list of input items into a list of input items.
+
+Source code in `src/agents/items.py`
+    
+    
+    209
+    210
+    211
+    212
+    213
+    214
+    215
+    216
+    217
+    218
+    219
+    220
+    221
+
+| 
+    
+    
+    @classmethod
+    def input_to_new_input_list(
+        cls, input: str | list[TResponseInputItem]
+    ) -> list[TResponseInputItem]:
+        """Converts a string or list of input items into a list of input items."""
+        if isinstance(input, str):
+            return [
+                {
+                    "content": input,
+                    "role": "user",
+                }
+            ]
+        return copy.deepcopy(input)
+      
+  
+---|---  
+  
+####  text_message_outputs `classmethod`
+    
+    
+    text_message_outputs(items: list[RunItem]) -> str
+    
+
+Concatenates all the text content from a list of message output items.
+
+Source code in `src/agents/items.py`
+    
+    
+    223
+    224
+    225
+    226
+    227
+    228
+    229
+    230
+
+| 
+    
+    
+    @classmethod
+    def text_message_outputs(cls, items: list[RunItem]) -> str:
+        """Concatenates all the text content from a list of message output items."""
+        text = ""
+        for item in items:
+            if isinstance(item, MessageOutputItem):
+                text += cls.text_message_output(item)
+        return text
+      
+  
+---|---  
+  
+####  text_message_output `classmethod`
+    
+    
+    text_message_output(message: MessageOutputItem) -> str
+    
+
+Extracts all the text content from a single message output item.
+
+Source code in `src/agents/items.py`
+    
+    
+    232
+    233
+    234
+    235
+    236
+    237
+    238
+    239
+
+| 
+    
+    
+    @classmethod
+    def text_message_output(cls, message: MessageOutputItem) -> str:
+        """Extracts all the text content from a single message output item."""
+        text = ""
+        for item in message.raw_item.content:
+            if isinstance(item, ResponseOutputText):
+                text += item.text
+        return text
+      
+  
+---|---  
+  
+####  tool_call_output_item `classmethod`
+    
+    
+    tool_call_output_item(
+        tool_call: ResponseFunctionToolCall, output: str
+    ) -> FunctionCallOutput
+    
+
+Creates a tool call output item from a tool call and its output.
+
+Source code in `src/agents/items.py`
+    
+    
+    241
+    242
+    243
+    244
+    245
+    246
+    247
+    248
+    249
+    250
+
+| 
+    
+    
+    @classmethod
+    def tool_call_output_item(
+        cls, tool_call: ResponseFunctionToolCall, output: str
+    ) -> FunctionCallOutput:
+        """Creates a tool call output item from a tool call and its output."""
+        return {
+            "call_id": tool_call.call_id,
+            "output": output,
+            "type": "function_call_output",
+        }
+      
+  
+---|---
