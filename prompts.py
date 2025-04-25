@@ -134,106 +134,160 @@ AVAILABLE INSTRUMENTS:
 {instrument_list}
 
 INSTRUCTIONS:
-1. At the very top of your code, ALWAYS declare all required imports (e.g., import pretty_midi, import numpy as np, import random, from copy import deepcopy if you use it, etc.).
-2. At the very top of your code, ALWAYS define these timing variables (regardless of instrument presence):
-   - bpm (beats per minute)
-   - beat_dur (duration of a beat in seconds)
-   - bar_duration (duration of a 4/4 bar in seconds)
-   - loop_dur (total duration of the loop in seconds)
-   - num_bars (number of bars in the loop)
-   Use the loaded MIDI object to calculate these.
-3. **Never pass string note names (like 'G3', 'B3', 'D4') directly to pretty_midi.Note. Always convert them to MIDI note numbers using pretty_midi.note_name_to_number('G3') before using as a pitch.**
-   - Example:
-     chord_names = ['G3', 'B3', 'D4']
-     chord = [pretty_midi.note_name_to_number(n) for n in chord_names]
-     for note in chord:
-         instrument.notes.append(pretty_midi.Note(..., pitch=note, ...))
-4. **CRITICAL: `pretty_midi.Instrument` does NOT accept a `bank` argument. To select a drum kit, use `is_drum=True` and the correct `program` number (usually 0 for the default kit). Bank selection (like bank 128 for specific drum kits) is handled by the MIDI player, not in this code.**
-5. Modify or extend the code above to achieve the new musical goals, rather than starting from scratch. You have complete creative freedom to:
-   - Add new instruments appropriate for the {{style}} genre
-   - Modify existing instruments (change notes, velocity, timing)
-   - Add or change rhythmic, harmonic, or melodic elements
-   - Apply genre-specific techniques like detuning, layering, or effect suggestions
-   - Create a more authentic {{style}} sound based on the UNDERTALE Music Sample List reference
+1. ALWAYS FOLLOW THIS CODE STRUCTURE PRECISELY:
+   ```python
+   # Step 1: Import ALL necessary libraries explicitly
+   import pretty_midi
+   import numpy as np
+   import random
+   
+   # Step 2: Load the existing MIDI file
+   midi = pretty_midi.PrettyMIDI(midi_path)
+   
+   # Step 3: Define timing variables (ALWAYS include these exact variables)
+   bpm = midi.get_tempo_changes()[1][0] if len(midi.get_tempo_changes()[1]) > 0 else 120
+   beat_dur = 60 / bpm
+   bar_duration = 4 * beat_dur
+   loop_dur = midi.get_end_time()
+   num_bars = int(loop_dur // bar_duration)
+   
+   # Step 4: Define any helper functions you need
+   
+   # Step 5: Access and modify existing instruments
+   
+   # Step 6: Add new instruments
+   
+   # Step 7: Save the modified MIDI
+   midi.write(output_path)
+   ```
 
-6. PREFERRED: Write Python code using the `pretty_midi` library to LOAD, TRANSFORM, and SAVE the music:
-   - Use the provided `midi_path` to load the existing MIDI file
-   - Make creative enhancements based on the analysis and genre
-   - Save the result to the file path specified by the variable `output_path`
-   - Comment your code for clarity on creative decisions
-   - Be wrapped in <CODE>...</CODE>` tags
+2. CRITICAL INSTRUMENT CREATION RULES:
+   - ALWAYS use this exact syntax when creating new instruments:
+     ```python
+     # For regular instruments
+     new_inst = pretty_midi.Instrument(program=65)  # Example: 65 = Saxophone
+     
+     # For drums (NEVER use 'bank' parameter)
+     drums = pretty_midi.Instrument(program=0, is_drum=True)
+     ```
+   
+   - NO SHORTCUTS: Always define instrument variables fully before using them.
+   - VALIDATION: After creating any instrument, append it to the MIDI object
+     ```python
+     midi.instruments.append(new_inst)
+     ```
 
-7. ALTERNATIVE (if code is not possible): Return ONLY a strictly valid JSON object with parameters, wrapped in <PARAMS>...</PARAMS>` tags.
+3. CRITICAL NOTE CREATION RULES:
+   - ALWAYS convert note names to MIDI numbers:
+     ```python
+     pitch = pretty_midi.note_name_to_number('C4')
+     new_note = pretty_midi.Note(velocity=100, pitch=pitch, start=0.0, end=1.0)
+     instrument.notes.append(new_note)
+     ```
+   - ALWAYS use numeric variables for pitches, not string literals.
+   - ALWAYS ensure start time < end time for all notes.
+
+4. FORBIDDEN PRACTICES (WILL CAUSE ERRORS):
+   - DO NOT use 'bank' parameter in Instrument()
+   - DO NOT pass string note names directly to Note() constructor
+   - DO NOT use undefined variables (especially instruments or notes)
+   - DO NOT use positional arguments after keyword arguments
+
+5. Load the existing MIDI file, identify existing instruments, and modify/enhance them as needed.
+   Analyze the instruments by category:
+   ```python
+   # Analyze existing instruments
+   existing_programs = [inst.program for inst in midi.instruments]
+   has_drums = any(inst.is_drum for inst in midi.instruments)
+   has_bass = any(32 <= inst.program <= 39 for inst in midi.instruments)
+   has_lead = any(inst.program in [65, 56, 73] for inst in midi.instruments)
+   ```
+
+6. When enhancing the song, choose from these proven approaches:
+   - Add a new complementary instrument (carefully follow instrument creation rules)
+   - Enhance existing instrument patterns while preserving their core identity
+   - Adjust velocities to create better dynamics
+   - Add variations to existing patterns rather than completely replacing them
+
+7. EXAMPLES OF RELIABLE CODE:
+
+   EXAMPLE: Adding a new bass line
+   ```python
+   # Add a new bass instrument
+   bass = pretty_midi.Instrument(program=33)  # Electric bass
+   
+   # Define a bass pattern
+   bass_notes = ['E2', 'G2', 'A2', 'B2']
+   bass_pitches = [pretty_midi.note_name_to_number(note) for note in bass_notes]
+   
+   for bar in range(num_bars):
+       for i, pitch in enumerate(bass_pitches):
+           start = bar * bar_duration + i * beat_dur
+           end = start + 0.9 * beat_dur
+           bass.notes.append(pretty_midi.Note(velocity=80, pitch=pitch, start=start, end=end))
+   
+   # Add bass to the MIDI
+   midi.instruments.append(bass)
+   ```
 
 SUCCESS CRITERIA:
-- Response contains ONLY the <CODE>...</CODE> block (preferred) or <PARAMS>...</PARAMS> block (fallback).
-- The code loads the existing MIDI, enhances it creatively, and saves to `output_path`.
-- The enhancement clearly addresses feedback from the analysis and improves the musical quality.
-- The code is executable Python and self-contained.
+- Response contains ONLY the <CODE>...</CODE> block.
+- The code MUST load the existing MIDI file from midi_path.
+- The code MUST save the final MIDI to output_path.
+- All instruments and notes MUST be properly defined before use.
+- All notes MUST use numeric pitch values, not string note names.
+- The code MUST be executable Python with no syntax errors.
 
-EXAMPLE CODE RESPONSE:
+RELIABLE WORKING EXAMPLE:
 <CODE>
 import pretty_midi
 import numpy as np
 import random
-from copy import deepcopy
 
-# Load existing MIDI
+# Load the existing MIDI file
 midi = pretty_midi.PrettyMIDI(midi_path)
 
-# ALWAYS define timing variables at the top
+# Define timing variables
 bpm = midi.get_tempo_changes()[1][0] if len(midi.get_tempo_changes()[1]) > 0 else 120
 beat_dur = 60 / bpm
-loop_dur = midi.get_end_time()
 bar_duration = 4 * beat_dur
+loop_dur = midi.get_end_time()
 num_bars = int(loop_dur // bar_duration)
 
-# Analyze the existing instruments
+# Analyze existing instruments
 existing_programs = [inst.program for inst in midi.instruments]
 has_drums = any(inst.is_drum for inst in midi.instruments)
 has_bass = any(32 <= inst.program <= 39 for inst in midi.instruments)
-has_melody = any(inst.program in [65, 56, 73] for inst in midi.instruments)
 
-# Add what's missing based on analysis and style
-if not has_drums:
-    # Add drums code
-    drums = pretty_midi.Instrument(program=0, is_drum=True)
-    # Add appropriate drum pattern
-    midi.instruments.append(drums)
+# Add a lead guitar if it doesn't exist
+if not any(inst.program == 28 for inst in midi.instruments):
+    lead_guitar = pretty_midi.Instrument(program=28)  # Electric Guitar
     
-if not has_bass:
-    # Add bass code
-    bass = pretty_midi.Instrument(program=33)
-    # Add appropriate bass line
-    midi.instruments.append(bass)
+    # Create a simple melody
+    melody_notes = ['E4', 'G4', 'A4', 'B4']
+    melody_pitches = [pretty_midi.note_name_to_number(note) for note in melody_notes]
     
-# Enhance existing instruments
+    for bar in range(num_bars):
+        for i, pitch in enumerate(melody_pitches):
+            start = bar * bar_duration + i * beat_dur
+            end = start + 0.8 * beat_dur
+            lead_guitar.notes.append(pretty_midi.Note(velocity=100, pitch=pitch, start=start, end=end))
+    
+    midi.instruments.append(lead_guitar)
+
+# Enhance existing drums if they exist
 for instrument in midi.instruments:
     if instrument.is_drum:
-        # Enhance drum pattern
-        pass
-    elif 32 <= instrument.program <= 39:
-        # Enhance bass line
-        pass
-    else:
-        # Enhance melodic/harmonic elements
-        pass
+        # Add some additional cymbal hits
+        for bar in range(num_bars):
+            # Add crash cymbal on the first beat of every other bar
+            if bar % 2 == 0:
+                crash = pretty_midi.Note(velocity=100, pitch=49, start=bar * bar_duration, end=bar * bar_duration + 2 * beat_dur)
+                instrument.notes.append(crash)
 
-# Save the enhanced MIDI
+# Save the modified MIDI
 midi.write(output_path)
 </CODE>
-
-EXAMPLE JSON RESPONSE:
-<PARAMS>
-{{{{
-  "mutation_description": "Adding a dynamic countermelody with saxophone and enhancing the rhythm section with layered percussion to create a more authentic sound.",
-  "transpose_semitones": 0,
-  "velocity_change": 5,
-  "add_note_probability": 0.95,
-  "remove_note_probability": 0.1,
-  "instrument_program": 65
-}}}}
-</PARAMS>
 """
 
 analyze_prompt = """
@@ -264,9 +318,72 @@ ERROR MESSAGE:
 {{error_message}}
 
 INSTRUCTIONS:
-1. Analyze the error message and the faulty code.
-2. Identify the cause of the error (e.g., undefined variable, incorrect function call, type mismatch).
-3. Rewrite the code to fix the specific error while preserving the original musical intent and adhering to all previous rules (imports at top, timing variables defined, no 'bank' argument, MIDI note numbers, etc.).
-4. Ensure the corrected code is complete, executable, and saves the result to the `output_path` variable.
-5. Return ONLY the corrected Python code, wrapped in `<CODE>...</CODE>` tags. Do NOT include explanations.
+1. ANALYZE THE ERROR CAREFULLY. Common errors and their fixes:
+
+   • `NameError: name 'X' is not defined`:
+     - Define the missing variable before using it
+     - Check for typos in variable names
+     - Ensure all instrument variables are defined with pretty_midi.Instrument()
+   
+   • `TypeError: __init__() got an unexpected keyword argument 'bank'`:
+     - Remove all 'bank' parameters from pretty_midi.Instrument()
+     - For drums, use program=0, is_drum=True instead
+   
+   • `SyntaxError: positional argument follows keyword argument`:
+     - Reorder arguments to put all positional arguments before keyword arguments
+     - Convert positional arguments to keyword arguments
+   
+   • `TypeError: string indices must be integers`:
+     - Ensure note names are converted to integers with pretty_midi.note_name_to_number()
+     - Never use string note names directly in pretty_midi.Note() constructor
+
+2. ALWAYS START BY FIXING THE IMPORTS AND BASIC STRUCTURE:
+   ```python
+   import pretty_midi
+   import numpy as np
+   import random
+   
+   # Load the MIDI file
+   midi = pretty_midi.PrettyMIDI(midi_path)
+   
+   # Define timing variables
+   bpm = midi.get_tempo_changes()[1][0] if len(midi.get_tempo_changes()[1]) > 0 else 120
+   beat_dur = 60 / bpm
+   bar_duration = 4 * beat_dur
+   loop_dur = midi.get_end_time()
+   num_bars = int(loop_dur // bar_duration)
+   ```
+
+3. LOOK FOR THESE COMMON PROBLEMS:
+   • Undefined instruments: Check all instrument variables are defined before use
+   • Missing .append(): Ensure all new instruments are added to midi.instruments
+   • String note names: Replace with pretty_midi.note_name_to_number() conversion
+   • Missing imports: Add all required imports at the beginning
+   • Timing calculations: Fix any errors in start/end time calculations
+
+4. WHEN IN DOUBT, FOLLOW THIS RELIABLE PATTERN:
+   ```python
+   # Create instrument (NEVER use 'bank' parameter)
+   instrument = pretty_midi.Instrument(program=0, is_drum=True)  # For drums
+   # OR
+   instrument = pretty_midi.Instrument(program=28)  # For regular instruments
+   
+   # Add notes to instrument (ALWAYS convert string notes to MIDI pitch numbers)
+   notes = ['C4', 'E4', 'G4']
+   pitches = [pretty_midi.note_name_to_number(note) for note in notes]
+   
+   for pitch in pitches:
+       note = pretty_midi.Note(velocity=100, pitch=pitch, start=0.0, end=1.0)
+       instrument.notes.append(note)
+   
+   # Add instrument to MIDI
+   midi.instruments.append(instrument)
+   
+   # Save the MIDI
+   midi.write(output_path)
+   ```
+
+5. FOCUS ON FIXING THE SPECIFIC ERROR, while preserving the original musical intent.
+
+Your response MUST contain ONLY corrected Python code within <CODE>...</CODE> tags.
 """ 
