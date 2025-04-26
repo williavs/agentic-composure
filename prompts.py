@@ -38,6 +38,98 @@ DRUM KITS (Use Bank 128 in MIDI Player):
 128-004: Power Drum Kit
 """
 
+# pretty_midi documentation as a reference for code generation
+pretty_midi_docs = """
+pretty_midi contains utility function/classes for handling MIDI data in an easily manipulable format.
+
+Key Classes:
+1. PrettyMIDI(midi_file=None, resolution=220, initial_tempo=120.0)
+   - instruments: List of Instrument objects
+   - get_end_time(): Returns time in seconds where MIDI file ends
+   - write(filename): Write MIDI data to file
+   - get_tempo_changes(): Returns tempo change times and tempos
+
+2. Instrument(program, is_drum=False, name='')
+   - program: MIDI program number (0-127)
+   - is_drum: Boolean for drum tracks (channel 9)
+   - notes: List of Note objects
+   - Add to MIDI with: midi.instruments.append(instrument)
+
+3. Note(velocity, pitch, start, end)
+   - velocity: Note velocity (0-127)
+   - pitch: MIDI note number
+   - start: Note start time in seconds
+   - end: Note end time in seconds
+   - Add to instrument with: instrument.notes.append(note)
+
+Key Utility Functions:
+- note_name_to_number(note_name): Converts note name (e.g. 'C4') to MIDI number
+- note_number_to_name(note_number): Converts MIDI number to note name
+- instrument_name_to_program(name): Converts instrument name to program number
+
+Example for creating a simple MIDI file:
+```python
+import pretty_midi
+
+# Create a PrettyMIDI object
+midi = pretty_midi.PrettyMIDI(initial_tempo=120)
+
+# Create instrument
+piano = pretty_midi.Instrument(program=0)  # Piano
+
+# Create notes from note names
+note_names = ['C4', 'E4', 'G4']
+for i, name in enumerate(note_names):
+    # Convert note name to number
+    pitch = pretty_midi.note_name_to_number(name)
+    # Create a Note with start and end times in seconds
+    note = pretty_midi.Note(velocity=100, pitch=pitch, start=i*0.5, end=i*0.5+0.4)
+    # Add note to instrument
+    piano.notes.append(note)
+
+# Add instrument to MIDI
+midi.instruments.append(piano)
+
+# Write to file
+midi.write('output.mid')
+```
+
+Example for loading and modifying a MIDI file:
+```python
+import pretty_midi
+
+# Load MIDI file
+midi = pretty_midi.PrettyMIDI('input.mid')
+
+# Get timing info
+tempo = midi.get_tempo_changes()[1][0] if len(midi.get_tempo_changes()[1]) > 0 else 120
+beat_length = 60 / tempo
+
+# Add a new instrument
+bass = pretty_midi.Instrument(program=33)  # Electric bass
+
+# Create a bass line
+bass_pitches = [36, 38, 40, 41]  # C2, D2, E2, F2
+for i, pitch in enumerate(bass_pitches):
+    start = i * beat_length
+    end = start + 0.9 * beat_length
+    note = pretty_midi.Note(velocity=80, pitch=pitch, start=start, end=end)
+    bass.notes.append(note)
+
+# Add to MIDI
+midi.instruments.append(bass)
+
+# Save modified file
+midi.write('output.mid')
+```
+
+CRITICAL NOTES:
+1. NEVER use 'bank' parameter in Instrument() constructor
+2. For drums, use program=0, is_drum=True
+3. For note creation, ALWAYS convert note names to numbers with note_name_to_number()
+4. Don't forget to append instruments to midi.instruments after creating them
+"""
+
 system_prompt = f"""
 You are a creative music agent specialized in creating MIDI loops in various musical styles, using instruments from the Undertale SoundFont.
 Your primary responsibility is to generate, analyze, and iteratively improve music to maximize pleasantness and authenticity.
@@ -61,6 +153,9 @@ TASK: Create Python code to generate a complete musical loop in the {style} styl
 
 AVAILABLE INSTRUMENTS:
 """ + instrument_list + """
+
+PRETTY_MIDI REFERENCE DOCUMENTATION:
+""" + pretty_midi_docs + """
 
 INSTRUCTIONS:
 1. Write Python code using the `pretty_midi` library to create a musical loop in the {style} style.
@@ -132,6 +227,9 @@ ORIGINAL CODE FROM PREVIOUS ITERATION:
 
 AVAILABLE INSTRUMENTS:
 {instrument_list}
+
+PRETTY_MIDI REFERENCE DOCUMENTATION:
+{pretty_midi_docs}
 
 INSTRUCTIONS:
 1. ALWAYS FOLLOW THIS CODE STRUCTURE PRECISELY:
@@ -316,6 +414,9 @@ FAULTY CODE:
 
 ERROR MESSAGE:
 {{error_message}}
+
+PRETTY_MIDI REFERENCE DOCUMENTATION:
+{pretty_midi_docs}
 
 INSTRUCTIONS:
 1. ANALYZE THE ERROR CAREFULLY. Common errors and their fixes:

@@ -1,0 +1,804 @@
+indexmodules |pretty_midi 0.2.10 documentation » pretty_midi
+pretty_midi
+pretty_midi contains utility function/classes for handling MIDI data, so that it’s in a format from which it is easy to modify and extract information. If you end up using pretty_midi in a published research project, please cite the following report:
+
+Colin Raffel and Daniel P. W. Ellis. Intuitive Analysis, Creation and Manipulation of MIDI Data with pretty_midi. In 15th International Conference on Music Information Retrieval Late Breaking and Demo Papers, 2014.
+
+Example usage for analyzing, manipulating and synthesizing a MIDI file:
+
+import pretty_midi
+# Load MIDI file into PrettyMIDI object
+midi_data = pretty_midi.PrettyMIDI('example.mid')
+# Print an empirical estimate of its global tempo
+print midi_data.estimate_tempo()
+# Compute the relative amount of each semitone across the entire song,
+# a proxy for key
+total_velocity = sum(sum(midi_data.get_chroma()))
+print [sum(semitone)/total_velocity for semitone in midi_data.get_chroma()]
+# Shift all notes up by 5 semitones
+for instrument in midi_data.instruments:
+    # Don't want to shift drum notes
+    if not instrument.is_drum:
+        for note in instrument.notes:
+            note.pitch += 5
+# Synthesize the resulting MIDI data using sine waves
+audio_data = midi_data.synthesize()
+Example usage for creating a simple MIDI file:
+
+import pretty_midi
+# Create a PrettyMIDI object
+cello_c_chord = pretty_midi.PrettyMIDI()
+# Create an Instrument instance for a cello instrument
+cello_program = pretty_midi.instrument_name_to_program('Cello')
+cello = pretty_midi.Instrument(program=cello_program)
+# Iterate over note names, which will be converted to note number later
+for note_name in ['C5', 'E5', 'G5']:
+    # Retrieve the MIDI note number for this note name
+    note_number = pretty_midi.note_name_to_number(note_name)
+    # Create a Note instance, starting at 0s and ending at .5s
+    note = pretty_midi.Note(
+        velocity=100, pitch=note_number, start=0, end=.5)
+    # Add it to our cello instrument
+    cello.notes.append(note)
+# Add the cello instrument to the PrettyMIDI object
+cello_c_chord.instruments.append(cello)
+# Write out the MIDI data
+cello_c_chord.write('cello-C-chord.mid')
+Further examples can be found in the source tree’s examples directory.
+
+pretty_midi.PrettyMIDI
+class pretty_midi.PrettyMIDI(midi_file=None, resolution=220, initial_tempo=120.0)
+A container for MIDI data in an easily-manipulable format.
+
+Parameters
+midi_filestr or file
+Path or file pointer to a MIDI file. Default None which means create an empty class with the supplied values for resolution and initial tempo.
+
+resolutionint
+Resolution of the MIDI data, when no file is provided.
+
+initial_tempofloat
+Initial tempo for the MIDI data, when no file is provided.
+
+Attributes
+instrumentslist
+List of pretty_midi.Instrument objects.
+
+key_signature_changeslist
+List of pretty_midi.KeySignature objects.
+
+time_signature_changeslist
+List of pretty_midi.TimeSignature objects.
+
+lyricslist
+List of pretty_midi.Lyric objects.
+
+text_eventslist
+List of pretty_midi.Text objects.
+
+__init__(midi_file=None, resolution=220, initial_tempo=120.0)
+Initialize either by populating it with MIDI data from a file or from scratch with no data.
+
+get_tempo_changes()
+Return arrays of tempo changes in quarter notes-per-minute and their times.
+
+Returns
+tempo_change_timesnp.ndarray
+Times, in seconds, where the tempo changes.
+
+tempinp.ndarray
+What the tempo is, in quarter notes-per-minute, at each point in time in tempo_change_times.
+
+get_end_time()
+Returns the time of the end of the MIDI object (time of the last event in all instruments/meta-events).
+
+Returns
+end_timefloat
+Time, in seconds, where this MIDI file ends.
+
+estimate_tempi()
+Return an empirical estimate of tempos and each tempo’s probability. Based on “Automatic Extraction of Tempo and Beat from Expressive Performance”, Dixon 2001.
+
+Returns
+temposnp.ndarray
+Array of estimated tempos, in beats per minute.
+
+probabilitiesnp.ndarray
+Array of the probabilities of each tempo estimate.
+
+estimate_tempo()
+Returns the best tempo estimate from pretty_midi.PrettyMIDI.estimate_tempi(), for convenience.
+
+Returns
+tempofloat
+Estimated tempo, in bpm
+
+get_beats(start_time=0.0)
+Returns a list of beat locations, according to MIDI tempo changes. For compound meters (any whose numerator is a multiple of 3 greater than 3), this method returns every third denominator note (for 6/8 or 6/16 time, for example, it will return every third 8th note or 16th note, respectively). For all other meters, this method returns every denominator note (every quarter note for 3/4 or 4/4 time, for example).
+
+Parameters
+start_timefloat
+Location of the first beat, in seconds.
+
+Returns
+beatsnp.ndarray
+Beat locations, in seconds.
+
+estimate_beat_start(candidates=10, tolerance=0.025)
+Estimate the location of the first beat based on which of the first few onsets results in the best correlation with the onset spike train.
+
+Parameters
+candidatesint
+Number of candidate onsets to try.
+
+tolerancefloat
+The tolerance in seconds around which onsets will be used to treat a beat as correct.
+
+Returns
+beat_startfloat
+The offset which is chosen as the beat start location.
+
+get_downbeats(start_time=0.0)
+Return a list of downbeat locations, according to MIDI tempo changes and time signature change events.
+
+Parameters
+start_timefloat
+Location of the first downbeat, in seconds.
+
+Returns
+downbeatsnp.ndarray
+Downbeat locations, in seconds.
+
+get_onsets()
+Return a sorted list of the times of all onsets of all notes from all instruments. May have duplicate entries.
+
+Returns
+onsetsnp.ndarray
+Onset locations, in seconds.
+
+get_piano_roll(fs=100, times=None, pedal_threshold=64)
+Compute a piano roll matrix of the MIDI data.
+
+Parameters
+fsint
+Sampling frequency of the columns, i.e. each column is spaced apart by 1./fs seconds.
+
+timesnp.ndarray
+Times of the start of each column in the piano roll. Default None which is np.arange(0, get_end_time(), 1./fs).
+
+pedal_thresholdint
+Value of control change 64 (sustain pedal) message that is less than this value is reflected as pedal-off. Pedals will be reflected as elongation of notes in the piano roll. If None, then CC64 message is ignored. Default is 64.
+
+Returns
+piano_rollnp.ndarray, shape=(128,times.shape[0])
+Piano roll of MIDI data, flattened across instruments.
+
+get_pitch_class_histogram(use_duration=False, use_velocity=False, normalize=True)
+Computes the histogram of pitch classes.
+
+Parameters
+use_durationbool
+Weight frequency by note duration.
+
+use_velocitybool
+Weight frequency by note velocity.
+
+normalizebool
+Normalizes the histogram such that the sum of bin values is 1.
+
+Returns
+histogramnp.ndarray, shape=(12,)
+Histogram of pitch classes given all tracks, optionally weighted by their durations or velocities.
+
+get_pitch_class_transition_matrix(normalize=False, time_thresh=0.05)
+Computes the total pitch class transition matrix of all instruments. Transitions are added whenever the end of a note is within time_thresh from the start of any other note.
+
+Parameters
+normalizebool
+Normalize transition matrix such that matrix sum equals is 1.
+
+time_threshfloat
+Maximum temporal threshold, in seconds, between the start of a note and end time of any other note for a transition to be added.
+
+Returns
+pitch_class_transition_matrixnp.ndarray, shape=(12,12)
+Pitch class transition matrix.
+
+get_chroma(fs=100, times=None, pedal_threshold=64)
+Get the MIDI data as a sequence of chroma vectors.
+
+Parameters
+fsint
+Sampling frequency of the columns, i.e. each column is spaced apart by 1./fs seconds.
+
+timesnp.ndarray
+Times of the start of each column in the piano roll. Default None which is np.arange(0, get_end_time(), 1./fs).
+
+pedal_thresholdint
+Value of control change 64 (sustain pedal) message that is less than this value is reflected as pedal-off. Pedals will be reflected as elongation of notes in the piano roll. If None, then CC64 message is ignored. Default is 64.
+
+Returns
+piano_rollnp.ndarray, shape=(12,times.shape[0])
+Chromagram of MIDI data, flattened across instruments.
+
+synthesize(fs=44100, wave=<ufunc 'sin'>)
+Synthesize the pattern using some waveshape. Ignores drum track.
+
+Parameters
+fsint
+Sampling rate of the synthesized audio signal.
+
+wavefunction
+Function which returns a periodic waveform, e.g. np.sin, scipy.signal.square, etc.
+
+Returns
+synthesizednp.ndarray
+Waveform of the MIDI data, synthesized at fs.
+
+fluidsynth(fs=44100, sf2_path=None)
+Synthesize using fluidsynth.
+
+Parameters
+fsint
+Sampling rate to synthesize at.
+
+sf2_pathstr
+Path to a .sf2 file. Default None, which uses the TimGM6mb.sf2 file included with pretty_midi.
+
+Returns
+synthesizednp.ndarray
+Waveform of the MIDI data, synthesized at fs.
+
+tick_to_time(tick)
+Converts from an absolute tick to time in seconds using self.__tick_to_time.
+
+Parameters
+tickint
+Absolute tick to convert.
+
+Returns
+timefloat
+Time in seconds of tick.
+
+time_to_tick(time)
+Converts from a time in seconds to absolute tick using self._tick_scales.
+
+Parameters
+timefloat
+Time, in seconds.
+
+Returns
+tickint
+Absolute tick corresponding to the supplied time.
+
+adjust_times(original_times, new_times)
+Adjusts the timing of the events in the MIDI object. The parameters original_times and new_times define a mapping, so that if an event originally occurs at time original_times[n], it will be moved so that it occurs at new_times[n]. If events don’t occur exactly on a time in original_times, their timing will be linearly interpolated.
+
+Parameters
+original_timesnp.ndarray
+Times to map from.
+
+new_timesnp.ndarray
+New times to map to.
+
+remove_invalid_notes()
+Removes any notes whose end time is before or at their start time.
+
+write(filename)
+Write the MIDI data out to a .mid file.
+
+Parameters
+filenamestr or file
+Path or file to write .mid file to.
+
+pretty_midi.Instrument
+class pretty_midi.Instrument(program, is_drum=False, name='')
+Object to hold event information for a single instrument.
+
+Parameters
+programint
+MIDI program number (instrument index), in [0, 127].
+
+is_drumbool
+Is the instrument a drum instrument (channel 9)?
+
+namestr
+Name of the instrument.
+
+Attributes
+programint
+The program number of this instrument.
+
+is_drumbool
+Is the instrument a drum instrument (channel 9)?
+
+namestr
+Name of the instrument.
+
+noteslist
+List of pretty_midi.Note objects.
+
+pitch_bendslist
+List of of pretty_midi.PitchBend objects.
+
+control_changeslist
+List of pretty_midi.ControlChange objects.
+
+__init__(program, is_drum=False, name='')
+Create the Instrument.
+
+get_onsets()
+Get all onsets of all notes played by this instrument. May contain duplicates.
+
+Returns
+onsetsnp.ndarray
+List of all note onsets.
+
+get_piano_roll(fs=100, times=None, pedal_threshold=64)
+Compute a piano roll matrix of this instrument.
+
+Parameters
+fsint
+Sampling frequency of the columns, i.e. each column is spaced apart by 1./fs seconds.
+
+timesnp.ndarray
+Times of the start of each column in the piano roll. Default None which is np.arange(0, get_end_time(), 1./fs).
+
+pedal_thresholdint
+Value of control change 64 (sustain pedal) message that is less than this value is reflected as pedal-off. Pedals will be reflected as elongation of notes in the piano roll. If None, then CC64 message is ignored. Default is 64.
+
+Returns
+piano_rollnp.ndarray, shape=(128,times.shape[0])
+Piano roll of this instrument.
+
+get_chroma(fs=100, times=None, pedal_threshold=64)
+Get a sequence of chroma vectors from this instrument.
+
+Parameters
+fsint
+Sampling frequency of the columns, i.e. each column is spaced apart by 1./fs seconds.
+
+timesnp.ndarray
+Times of the start of each column in the piano roll. Default None which is np.arange(0, get_end_time(), 1./fs).
+
+pedal_thresholdint
+Value of control change 64 (sustain pedal) message that is less than this value is reflected as pedal-off. Pedals will be reflected as elongation of notes in the piano roll. If None, then CC64 message is ignored. Default is 64.
+
+Returns
+piano_rollnp.ndarray, shape=(12,times.shape[0])
+Chromagram of this instrument.
+
+get_end_time()
+Returns the time of the end of the events in this instrument.
+
+Returns
+end_timefloat
+Time, in seconds, of the last event.
+
+get_pitch_class_histogram(use_duration=False, use_velocity=False, normalize=False)
+Computes the frequency of pitch classes of this instrument, optionally weighted by their durations or velocities.
+
+Parameters
+use_durationbool
+Weight frequency by note duration.
+
+use_velocitybool
+Weight frequency by note velocity.
+
+normalizebool
+Normalizes the histogram such that the sum of bin values is 1.
+
+Returns
+histogramnp.ndarray, shape=(12,)
+Histogram of pitch classes given current instrument, optionally weighted by their durations or velocities.
+
+get_pitch_class_transition_matrix(normalize=False, time_thresh=0.05)
+Computes the pitch class transition matrix of this instrument. Transitions are added whenever the end of a note is within time_tresh from the start of any other note.
+
+Parameters
+normalizebool
+Normalize transition matrix such that matrix sum equals to 1.
+
+time_threshfloat
+Maximum temporal threshold, in seconds, between the start of a note and end time of any other note for a transition to be added.
+
+Returns
+transition_matrixnp.ndarray, shape=(12,12)
+Pitch class transition matrix.
+
+remove_invalid_notes()
+Removes any notes whose end time is before or at their start time.
+
+synthesize(fs=44100, wave=<ufunc 'sin'>)
+Synthesize the instrument’s notes using some waveshape. For drum instruments, returns zeros.
+
+Parameters
+fsint
+Sampling rate of the synthesized audio signal.
+
+wavefunction
+Function which returns a periodic waveform, e.g. np.sin, scipy.signal.square, etc.
+
+Returns
+synthesizednp.ndarray
+Waveform of the instrument’s notes, synthesized at fs.
+
+fluidsynth(fs=44100, sf2_path=None)
+Synthesize using fluidsynth.
+
+Parameters
+fsint
+Sampling rate to synthesize.
+
+sf2_pathstr
+Path to a .sf2 file. Default None, which uses the TimGM6mb.sf2 file included with pretty_midi.
+
+Returns
+synthesizednp.ndarray
+Waveform of the MIDI data, synthesized at fs.
+
+pretty_midi.Note
+class pretty_midi.Note(velocity, pitch, start, end)
+A note event.
+
+Parameters
+velocityint
+Note velocity.
+
+pitchint
+Note pitch, as a MIDI note number.
+
+startfloat
+Note on time, absolute, in seconds.
+
+endfloat
+Note off time, absolute, in seconds.
+
+__init__(velocity, pitch, start, end)
+get_duration()
+Get the duration of the note in seconds.
+
+property duration
+pretty_midi.PitchBend
+class pretty_midi.PitchBend(pitch, time)
+A pitch bend event.
+
+Parameters
+pitchint
+MIDI pitch bend amount, in the range [-8192, 8191].
+
+timefloat
+Time where the pitch bend occurs.
+
+__init__(pitch, time)
+pretty_midi.ControlChange
+class pretty_midi.ControlChange(number, value, time)
+A control change event.
+
+Parameters
+numberint
+The control change number, in [0, 127].
+
+valueint
+The value of the control change, in [0, 127].
+
+timefloat
+Time where the control change occurs.
+
+__init__(number, value, time)
+pretty_midi.TimeSignature
+class pretty_midi.TimeSignature(numerator, denominator, time)
+Container for a Time Signature event, which contains the time signature numerator, denominator and the event time in seconds.
+
+Examples
+
+Instantiate a TimeSignature object with 6/8 time signature at 3.14 seconds:
+
+ts = TimeSignature(6, 8, 3.14)
+print(ts)
+6/8 at 3.14 seconds
+Attributes
+numeratorint
+Numerator of time signature.
+
+denominatorint
+Denominator of time signature.
+
+timefloat
+Time of event in seconds.
+
+__init__(numerator, denominator, time)
+pretty_midi.KeySignature
+class pretty_midi.KeySignature(key_number, time)
+Contains the key signature and the event time in seconds. Only supports major and minor keys.
+
+Examples
+
+Instantiate a C# minor KeySignature object at 3.14 seconds:
+
+ks = KeySignature(13, 3.14)
+print(ks)
+C# minor at 3.14 seconds
+Attributes
+key_numberint
+Key number according to [0, 11] Major, [12, 23] minor. For example, 0 is C Major, 12 is C minor.
+
+timefloat
+Time of event in seconds.
+
+__init__(key_number, time)
+pretty_midi.Lyric
+class pretty_midi.Lyric(text, time)
+Timestamped lyric text.
+
+Attributes
+textstr
+The text of the lyric.
+
+timefloat
+The time in seconds of the lyric.
+
+__init__(text, time)
+pretty_midi.Text
+class pretty_midi.Text(text, time)
+Timestamped text event.
+
+Attributes
+textstr
+The text.
+
+timefloat
+The time it occurs in seconds.
+
+__init__(text, time)
+Utility functions
+pretty_midi.key_number_to_key_name(key_number)
+Convert a key number to a key string.
+
+Parameters
+key_numberint
+Uses pitch classes to represent major and minor keys. For minor keys, adds a 12 offset. For example, C major is 0 and C minor is 12.
+
+Returns
+key_namestr
+Key name in the format '(root) (mode)', e.g. 'Gb minor'. Gives preference for keys with flats, with the exception of F#, G# and C# minor.
+
+pretty_midi.key_name_to_key_number(key_string)
+Convert a key name string to key number.
+
+Parameters
+key_stringstr
+Format is '(root) (mode)', where:
+(root) is one of ABCDEFG or abcdefg. A lowercase root indicates a minor key when no mode string is specified. Optionally a # for sharp or b for flat can be specified.
+
+(mode) is optionally specified either as one of ‘M’, ‘Maj’, ‘Major’, ‘maj’, or ‘major’ for major or ‘m’, ‘Min’, ‘Minor’, ‘min’, ‘minor’ for minor. If no mode is specified and the root is uppercase, the mode is assumed to be major; if the root is lowercase, the mode is assumed to be minor.
+
+Returns
+key_numberint
+Integer representing the key and its mode. Integers from 0 to 11 represent major keys from C to B; 12 to 23 represent minor keys from C to B.
+
+pretty_midi.mode_accidentals_to_key_number(mode, num_accidentals)
+Convert a given number of accidentals and mode to a key number.
+
+Parameters
+modeint
+0 is major, 1 is minor.
+
+num_accidentalsint
+Positive number is used for sharps, negative number is used for flats.
+
+Returns
+key_numberint
+Integer representing the key and its mode.
+
+pretty_midi.key_number_to_mode_accidentals(key_number)
+Converts a key number to number of accidentals and mode.
+
+Parameters
+key_numberint
+Key number as used in pretty_midi.
+
+Returns
+modeint
+0 for major, 1 for minor.
+
+num_accidentalsint
+Number of accidentals. Positive is for sharps and negative is for flats.
+
+pretty_midi.qpm_to_bpm(quarter_note_tempo, numerator, denominator)
+Converts from quarter notes per minute to beats per minute.
+
+Parameters
+quarter_note_tempofloat
+Quarter note tempo.
+
+numeratorint
+Numerator of time signature.
+
+denominatorint
+Denominator of time signature.
+
+Returns
+bpmfloat
+Tempo in beats per minute.
+
+pretty_midi.note_number_to_hz(note_number)
+Convert a (fractional) MIDI note number to its frequency in Hz.
+
+Parameters
+note_numberfloat
+MIDI note number, can be fractional.
+
+Returns
+note_frequencyfloat
+Frequency of the note in Hz.
+
+pretty_midi.hz_to_note_number(frequency)
+Convert a frequency in Hz to a (fractional) note number.
+
+Parameters
+frequencyfloat
+Frequency of the note in Hz.
+
+Returns
+note_numberfloat
+MIDI note number, can be fractional.
+
+pretty_midi.note_name_to_number(note_name)
+Converts a note name in the format '(note)(accidental)(octave number)' (e.g. 'C#4') to MIDI note number.
+
+'(note)' is required, and is case-insensitive.
+
+'(accidental)' should be '' for natural, '#' for sharp and '!' or 'b' for flat.
+
+If '(octave)' is '', octave 0 is assumed.
+
+Parameters
+note_namestr
+A note name, as described above.
+
+Returns
+note_numberint
+MIDI note number corresponding to the provided note name.
+
+Notes
+
+Thanks to Brian McFee.
+
+pretty_midi.note_number_to_name(note_number)
+Convert a MIDI note number to its name, in the format '(note)(accidental)(octave number)' (e.g. 'C#4').
+
+Parameters
+note_numberint
+MIDI note number. If not an int, it will be rounded.
+
+Returns
+note_namestr
+Name of the supplied MIDI note number.
+
+Notes
+
+Thanks to Brian McFee.
+
+pretty_midi.note_number_to_drum_name(note_number)
+Converts a MIDI note number in a percussion instrument to the corresponding drum name, according to the General MIDI standard.
+
+Any MIDI note number outside of the valid range (note 35-81, zero-indexed) will result in an empty string.
+
+Parameters
+note_numberint
+MIDI note number. If not an int, it will be rounded.
+
+Returns
+drum_namestr
+Name of the drum for this note for a percussion instrument.
+
+Notes
+
+See http://www.midi.org/techspecs/gm1sound.php
+
+pretty_midi.drum_name_to_note_number(drum_name)
+Converts a drum name to the corresponding MIDI note number for a percussion instrument. Conversion is case, whitespace, and non-alphanumeric character insensitive.
+
+Parameters
+drum_namestr
+Name of a drum which exists in the general MIDI standard. If the drum is not found, a ValueError is raised.
+
+Returns
+note_numberint
+The MIDI note number corresponding to this drum.
+
+Notes
+
+See http://www.midi.org/techspecs/gm1sound.php
+
+pretty_midi.program_to_instrument_name(program_number)
+Converts a MIDI program number to the corresponding General MIDI instrument name.
+
+Parameters
+program_numberint
+MIDI program number, between 0 and 127.
+
+Returns
+instrument_namestr
+Name of the instrument corresponding to this program number.
+
+Notes
+
+See http://www.midi.org/techspecs/gm1sound.php
+
+pretty_midi.instrument_name_to_program(instrument_name)
+Converts an instrument name to the corresponding General MIDI program number. Conversion is case, whitespace, and non-alphanumeric character insensitive.
+
+Parameters
+instrument_namestr
+Name of an instrument which exists in the general MIDI standard. If the instrument is not found, a ValueError is raised.
+
+Returns
+program_numberint
+The MIDI program number corresponding to this instrument.
+
+Notes
+
+See http://www.midi.org/techspecs/gm1sound.php
+
+pretty_midi.program_to_instrument_class(program_number)
+Converts a MIDI program number to the corresponding General MIDI instrument class.
+
+Parameters
+program_numberint
+MIDI program number, between 0 and 127.
+
+Returns
+instrument_classstr
+Name of the instrument class corresponding to this program number.
+
+Notes
+
+See http://www.midi.org/techspecs/gm1sound.php
+
+pretty_midi.pitch_bend_to_semitones(pitch_bend, semitone_range=2.0)
+Convert a MIDI pitch bend value (in the range [-8192, 8191]) to the bend amount in semitones.
+
+Parameters
+pitch_bendint
+MIDI pitch bend amount, in [-8192, 8191].
+
+semitone_rangefloat
+Convert to +/- this semitone range. Default is 2., which is the General MIDI standard +/-2 semitone range.
+
+Returns
+semitonesfloat
+Number of semitones corresponding to this pitch bend amount.
+
+pretty_midi.semitones_to_pitch_bend(semitones, semitone_range=2.0)
+Convert a semitone value to the corresponding MIDI pitch bend integer.
+
+Parameters
+semitonesfloat
+Number of semitones for the pitch bend.
+
+semitone_rangefloat
+Convert to +/- this semitone range. Default is 2., which is the General MIDI standard +/-2 semitone range.
+
+Returns
+pitch_bendint
+MIDI pitch bend amount, in [-8192, 8191].
+
+Table of Contents
+pretty_midi
+pretty_midi.PrettyMIDI
+pretty_midi.Instrument
+pretty_midi.Note
+pretty_midi.PitchBend
+pretty_midi.ControlChange
+pretty_midi.TimeSignature
+pretty_midi.KeySignature
+pretty_midi.Lyric
+pretty_midi.Text
+Utility functions
+This Page
+Show Source
+Quick search
+indexmodules |pretty_midi 0.2.10 documentation » pretty_midi
+© Copyright Colin Raffel. Created using Sphinx 4.4.0.
