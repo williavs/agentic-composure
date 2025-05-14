@@ -1,44 +1,178 @@
-instrument_list = """
-Available Instruments (Undertale SoundFont):
-000: Undertale Piano | 001: Undertale Piano 2 | 002: Undertale Glocken
-003: Undertale Violin | 004: Undertale Strings | 005: Undertale Aahs
-006: Undertale Square | 007: Undertale Saw | 008: Undertale Timpani
-009: Undertale Cymbal | 010: Fallen Down Piano | 011: Fallen Down Bass
-012: Fallen Pan Flute | 013: Ruins Flute | 014: Battle 12.5%
-015: Battle 25% | 016: Ghost Sample | 017: Ghost Bass
-018: Ghost Voice | 019: Ghost Sax | 020: Ghost Trumpet
-021: Home Guitar | 022: Home Music Box | 023: Heartache Square
-024: Heartache Square 2 | 025: Heartache Oboe | 026: Sans Clavinet
-027: Sans Bass | 028: Sans Sax | 029: Dog
-030: Snowdin Vibraphone | 031: Snowdin Xylophone | 032: Snowdin Bells
-033: Snowdin Pizzicato | 034: Snowdin Viola | 035: Shop Clarinet
-036: Bone Xylophone | 037: Bone Strings | 038: Bonetrousle Flute
-039: Date Piano | 040: Quiet Celesta | 041: Temmie Doo
-042: Temmie Bird | 043: Justice Trumpet | 044: Justice Brass
-045: Justice Choir | 046: Justice Bass Drum | 047: Alphys
-048: Showtime Square | 049: Showtime Trumpet | 050: Showtime Bass
-051: Medium Saw | 052: Musical Harp | 053: Musical Trumpet
-054: Musical Tuba | 055: Musical Horn | 056: Musical Reed
-057: Musical Flute | 058: Snowdin Strings | 059: Musical Strings
-060: Musical Timpani | 061: Stronger Brass | 062: Stronger Strings
-063: Glamour Piano | 064: Glamour Rhodes | 065: Glamour Sax
-066: Barrier | 067: Nightmare Bass | 068: Finale Trombone
-069: Here We Are | 070: Amalgam | 071: Amalgam Trumpet
-072: Amalgam Strings | 073: Amalgam Lead | 074: Amalgam Noise
-075: Amalgam Perc | 076: Amalgam Bump | 077: Save Guitar
-078: Save Charang | 079: Reunited Piano | 080: Reunited Rhodes
-081: Reunited Bass | 082: Reunited Sax | 083: Reunited Flute
-084: Reunited Strings | 085: Reunited Pizzicato | 086: Reunited Toms
-087: Undying Bells | 088: Genocide Guitar | 089: Genocide Brass
-090: Genocide Hit
+instrument_list = '''
+<GeneralMIDIInstruments>
+  <Piano>
+    <Instrument program="0">Acoustic Grand Piano</Instrument>
+    <Instrument program="1">Bright Acoustic Piano</Instrument>
+    <Instrument program="2">Electric Grand Piano</Instrument>
+    <Instrument program="4">Electric Piano 1</Instrument>
+    <Instrument program="5">Electric Piano 2</Instrument>
+    <Instrument program="6">Harpsichord</Instrument>
+    <Instrument program="7">Clavinet</Instrument>
+  </Piano>
+  <ChromaticPercussion>
+    <Instrument program="8">Celesta</Instrument>
+    <Instrument program="9">Glockenspiel</Instrument>
+    <Instrument program="10">Music Box</Instrument>
+    <Instrument program="11">Vibraphone</Instrument>
+    <Instrument program="12">Marimba</Instrument>
+    <Instrument program="13">Xylophone</Instrument>
+    <Instrument program="14">Tubular Bells</Instrument>
+    <Instrument program="15">Dulcimer</Instrument>
+  </ChromaticPercussion>
+  <Organ>
+    <Instrument program="16">Drawbar Organ</Instrument>
+    <Instrument program="17">Percussive Organ</Instrument>
+    <Instrument program="18">Rock Organ</Instrument>
+    <Instrument program="19">Church Organ</Instrument>
+    <Instrument program="20">Reed Organ</Instrument>
+    <Instrument program="21">Accordion</Instrument>
+    <Instrument program="22">Harmonica</Instrument>
+    <Instrument program="23">Tango Accordion</Instrument>
+  </Organ>
+  <Guitar>
+    <Instrument program="24">Acoustic Guitar (nylon)</Instrument>
+    <Instrument program="25">Acoustic Guitar (steel)</Instrument>
+    <Instrument program="26">Electric Guitar (jazz)</Instrument>
+    <Instrument program="27">Electric Guitar (clean)</Instrument>
+    <Instrument program="28">Electric Guitar (muted)</Instrument>
+    <Instrument program="29">Overdriven Guitar</Instrument>
+    <Instrument program="30">Distortion Guitar</Instrument>
+    <Instrument program="31">Guitar Harmonics</Instrument>
+  </Guitar>
+  <Bass>
+    <Instrument program="32">Acoustic Bass</Instrument>
+    <Instrument program="33">Electric Bass (finger)</Instrument>
+    <Instrument program="34">Electric Bass (pick)</Instrument>
+    <Instrument program="35">Fretless Bass</Instrument>
+    <Instrument program="36">Slap Bass 1</Instrument>
+    <Instrument program="37">Slap Bass 2</Instrument>
+    <Instrument program="38">Synth Bass 1</Instrument>
+    <Instrument program="39">Synth Bass 2</Instrument>
+  </Bass>
+  <Strings>
+    <Instrument program="40">Violin</Instrument>
+    <Instrument program="41">Viola</Instrument>
+    <Instrument program="42">Cello</Instrument>
+    <Instrument program="43">Contrabass</Instrument>
+    <Instrument program="44">Tremolo Strings</Instrument>
+    <Instrument program="45">Pizzicato Strings</Instrument>
+    <Instrument program="46">Orchestral Harp</Instrument>
+    <Instrument program="47">Timpani</Instrument>
+  </Strings>
+  <Ensemble>
+    <Instrument program="48">String Ensemble 1</Instrument>
+    <Instrument program="49">String Ensemble 2</Instrument>
+    <Instrument program="50">SynthStrings 1</Instrument>
+    <Instrument program="51">SynthStrings 2</Instrument>
+    <Instrument program="52">Choir Aahs</Instrument>
+    <Instrument program="53">Voice Oohs</Instrument>
+    <Instrument program="54">Synth Voice</Instrument>
+    <Instrument program="55">Orchestra Hit</Instrument>
+  </Ensemble>
+  <Brass>
+    <Instrument program="56">Trumpet</Instrument>
+    <Instrument program="57">Trombone</Instrument>
+    <Instrument program="58">Tuba</Instrument>
+    <Instrument program="59">Muted Trumpet</Instrument>
+    <Instrument program="60">French Horn</Instrument>
+    <Instrument program="61">Brass Section</Instrument>
+    <Instrument program="62">SynthBrass 1</Instrument>
+    <Instrument program="63">SynthBrass 2</Instrument>
+  </Brass>
+  <Reed>
+    <Instrument program="64">Soprano Sax</Instrument>
+    <Instrument program="65">Alto Sax</Instrument>
+    <Instrument program="66">Tenor Sax</Instrument>
+    <Instrument program="67">Baritone Sax</Instrument>
+    <Instrument program="68">Oboe</Instrument>
+    <Instrument program="69">English Horn</Instrument>
+    <Instrument program="70">Bassoon</Instrument>
+    <Instrument program="71">Clarinet</Instrument>
+  </Reed>
+  <Pipe>
+    <Instrument program="72">Piccolo</Instrument>
+    <Instrument program="73">Flute</Instrument>
+    <Instrument program="74">Recorder</Instrument>
+    <Instrument program="75">Pan Flute</Instrument>
+    <Instrument program="76">Blown Bottle</Instrument>
+    <Instrument program="77">Shakuhachi</Instrument>
+    <Instrument program="78">Whistle</Instrument>
+    <Instrument program="79">Ocarina</Instrument>
+  </Pipe>
+  <SynthLead>
+    <Instrument program="80">Lead 1 (square)</Instrument>
+    <Instrument program="81">Lead 2 (sawtooth)</Instrument>
+    <Instrument program="82">Lead 3 (calliope)</Instrument>
+    <Instrument program="83">Lead 4 (chiff)</Instrument>
+    <Instrument program="84">Lead 5 (charang)</Instrument>
+    <Instrument program="85">Lead 6 (voice)</Instrument>
+    <Instrument program="86">Lead 7 (fifths)</Instrument>
+    <Instrument program="87">Lead 8 (bass + lead)</Instrument>
+  </SynthLead>
+  <SynthPad>
+    <Instrument program="88">Pad 1 (new age)</Instrument>
+    <Instrument program="89">Pad 2 (warm)</Instrument>
+    <Instrument program="90">Pad 3 (polysynth)</Instrument>
+    <Instrument program="91">Pad 4 (choir)</Instrument>
+    <Instrument program="92">Pad 5 (bowed)</Instrument>
+    <Instrument program="93">Pad 6 (metallic)</Instrument>
+    <Instrument program="94">Pad 7 (halo)</Instrument>
+    <Instrument program="95">Pad 8 (sweep)</Instrument>
+  </SynthPad>
+  <SynthEffects>
+    <Instrument program="96">FX 1 (rain)</Instrument>
+    <Instrument program="97">FX 2 (soundtrack)</Instrument>
+    <Instrument program="98">FX 3 (crystal)</Instrument>
+    <Instrument program="99">FX 4 (atmosphere)</Instrument>
+    <Instrument program="100">FX 5 (brightness)</Instrument>
+    <Instrument program="101">FX 6 (goblins)</Instrument>
+    <Instrument program="102">FX 7 (echoes)</Instrument>
+    <Instrument program="103">FX 8 (sci-fi)</Instrument>
+  </SynthEffects>
+  <Ethnic>
+    <Instrument program="104">Sitar</Instrument>
+    <Instrument program="105">Banjo</Instrument>
+    <Instrument program="106">Shamisen</Instrument>
+    <Instrument program="107">Koto</Instrument>
+    <Instrument program="108">Kalimba</Instrument>
+    <Instrument program="109">Bagpipe</Instrument>
+    <Instrument program="110">Fiddle</Instrument>
+    <Instrument program="111">Shanai</Instrument>
+  </Ethnic>
+  <Percussive>
+    <Instrument program="112">Tinkle Bell</Instrument>
+    <Instrument program="113">Agogo</Instrument>
+    <Instrument program="114">Steel Drums</Instrument>
+    <Instrument program="115">Woodblock</Instrument>
+    <Instrument program="116">Taiko Drum</Instrument>
+    <Instrument program="117">Melodic Tom</Instrument>
+    <Instrument program="118">Synth Drum</Instrument>
+    <Instrument program="119">Reverse Cymbal</Instrument>
+  </Percussive>
+  <SoundEffects>
+    <Instrument program="120">Guitar Fret Noise</Instrument>
+    <Instrument program="121">Breath Noise</Instrument>
+    <Instrument program="122">Seashore</Instrument>
+    <Instrument program="123">Bird Tweet</Instrument>
+    <Instrument program="124">Telephone Ring</Instrument>
+    <Instrument program="125">Helicopter</Instrument>
+    <Instrument program="126">Applause</Instrument>
+    <Instrument program="127">Gunshot</Instrument>
+  </SoundEffects>
+  <DrumKits channel="9">
+    <Kit program="0">Standard Kit</Kit>
+    <Kit program="1">Room Kit</Kit>
+    <Kit program="2">Power Kit</Kit>
+    <Kit program="3">Electronic Kit</Kit>
+    <Kit program="4">TR-808 Kit</Kit>
+    <Kit program="5">Jazz Kit</Kit>
+    <Kit program="6">Brush Kit</Kit>
+    <Kit program="7">Orchestra Kit</Kit>
+    <Kit program="8">SFX Kit</Kit>
+  </DrumKits>
+</GeneralMIDIInstruments>
+'''
 
-DRUM KITS (Use Bank 128 in MIDI Player):
-128-000: Undertale Drum Kit | 128-001: Dance Drum Kit
-128-002: Showtime Drum Kit | 128-003: Stronger Drum Kit
-128-004: Power Drum Kit
-"""
-
-# pretty_midi documentation as a reference for code generation
 pretty_midi_docs = """
 pretty_midi contains utility function/classes for handling MIDI data in an easily manipulable format.
 
@@ -67,12 +201,20 @@ Key Utility Functions:
 - note_number_to_name(note_number): Converts MIDI number to note name
 - instrument_name_to_program(name): Converts instrument name to program number
 
+IMPORTANT: Never use midi.initial_tempo to get the tempo. Always use:
+bpm = midi.get_tempo_changes()[1][0] if len(midi.get_tempo_changes()[1]) > 0 else 120
+beat_length = 60.0 / bpm
+
 Example for creating a simple MIDI file:
 ```python
 import pretty_midi
 
 # Create a PrettyMIDI object
-midi = pretty_midi.PrettyMIDI(initial_tempo=120)
+midi = pretty_midi.PrettyMIDI()
+
+# Set tempo
+bpm = midi.get_tempo_changes()[1][0] if len(midi.get_tempo_changes()[1]) > 0 else 120
+beat_length = 60.0 / bpm
 
 # Create instrument
 piano = pretty_midi.Instrument(program=0)  # Piano
@@ -83,7 +225,7 @@ for i, name in enumerate(note_names):
     # Convert note name to number
     pitch = pretty_midi.note_name_to_number(name)
     # Create a Note with start and end times in seconds
-    note = pretty_midi.Note(velocity=100, pitch=pitch, start=i*0.5, end=i*0.5+0.4)
+    note = pretty_midi.Note(velocity=100, pitch=pitch, start=i*beat_length, end=i*beat_length+0.4)
     # Add note to instrument
     piano.notes.append(note)
 
@@ -102,8 +244,8 @@ import pretty_midi
 midi = pretty_midi.PrettyMIDI('input.mid')
 
 # Get timing info
-tempo = midi.get_tempo_changes()[1][0] if len(midi.get_tempo_changes()[1]) > 0 else 120
-beat_length = 60 / tempo
+bpm = midi.get_tempo_changes()[1][0] if len(midi.get_tempo_changes()[1]) > 0 else 120
+beat_length = 60.0 / bpm
 
 # Add a new instrument
 bass = pretty_midi.Instrument(program=33)  # Electric bass
@@ -128,88 +270,204 @@ CRITICAL NOTES:
 2. For drums, use program=0, is_drum=True
 3. For note creation, ALWAYS convert note names to numbers with note_name_to_number()
 4. Don't forget to append instruments to midi.instruments after creating them
+5. NEVER use midi.initial_tempo. Always use midi.get_tempo_changes() to get the tempo.
 """
 
+# ================================
+# SYSTEM PROMPT
+# ================================
 system_prompt = f"""
-You are a creative music agent specialized in creating MIDI loops in various musical styles, using instruments from the Undertale SoundFont.
+You are a creative music agent specialized in creating MIDI loops in various musical styles, using instruments from the General MIDI SoundFont.
 Your primary responsibility is to generate, analyze, and iteratively improve music to maximize pleasantness and authenticity.
 
 REFERENCE INSTRUMENT LIST:
 {instrument_list}
 
-REFERENCE: The UNDERTALE Music Sample List (archived) provides authentic instrument, detuning, and arrangement details for each track. Leverage this knowledge to create authentic-sounding music with appropriate instrument combinations, layering, detuning, and effects.
+REFERENCE: The General MIDI instrument list provides authentic instrument, detuning, and arrangement details for each track. Leverage this knowledge to create authentic-sounding music.
 
-CRITICAL INSTRUCTION: When composing or mutating, you MUST:
-1. Return ONLY a JSON object with the required musical parameters.
-2. Ensure the JSON is strictly valid. **Do NOT use leading zeros for numbers (e.g., use `65`, not `065`)**.
-3. Do NOT include file paths, explanations, or any other text.
-4. The agent will handle file paths and tool invocation.
+TECHNICAL EXPERTISE: You are proficient with the pretty_midi Python library for creating MIDI files.
 
-Your ONLY role in this interaction is to return the required musical parameters as a strictly valid JSON object or creative Python code that generates music.
+TIMING ALIGNMENT RULES (EXTREMELY IMPORTANT):
+1. ALWAYS use a "bar-beat-grid" approach: All notes MUST be placed on a consistent grid defined by:
+   - Bars (4 beats per bar in 4/4 time)
+   - Beats (quarter notes)
+   - Sub-beats (8th or 16th notes)
+
+2. The GOLDEN RULE: All instruments must reference the SAME timing variables:
+   ```python
+   # These variables must be computed first and used for ALL instruments
+   bpm = 120  # Or another appropriate tempo
+   beat_length = 60.0 / bpm
+   bar_length = 4 * beat_length  # 4 beats per bar (4/4 time)
+   ```
+
+3. Instrument patterns must be created using bar and beat indices, NOT arbitrary time offsets:
+   ```python
+   # CORRECT - using bar and beat indices:
+   for bar in range(num_bars):
+       for beat in range(4):  # 4 beats per bar
+           time = bar * bar_length + beat * beat_length
+           # Add notes at this time
+   ```
+
+4. When extending or doubling MIDI length, ALL instruments must extend by the exact same amount:
+   ```python
+   # CORRECT approach:
+   original_duration = midi.get_end_time()
+   for instrument in midi.instruments:
+       original_notes = instrument.notes.copy()
+       for note in original_notes:
+           new_note = pretty_midi.Note(
+               velocity=note.velocity,
+               pitch=note.pitch,
+               start=note.start + original_duration,  # Same duration for ALL
+               end=note.end + original_duration       # Same duration for ALL
+           )
+           instrument.notes.append(new_note)
+   ```
+
+5. ALL instruments must have the SAME underlying rhythm structure. If one changes, ALL must change.
+
+FAILURE MODES TO AVOID:
+1. Different timing variables for different instruments
+2. Arbitrary time offsets instead of bar-beat indexing
+3. Different patterns/loops with different lengths
+4. Excessive randomization of timing
+5. Unpredictable note placements (outside the grid)
+
+You're expected to prioritize musical enjoyment over complexity. Starting simple and building complexity gradually is key.
 """
 
-compose_prompt_template = """
+# ================================
+# COMPOSITION PROMPT
+# ================================
+compose_prompt_template = '''
+YOUR RESPONSE MUST BE ONLY THE PYTHON CODE, WRAPPED IN <CODE>...</CODE> TAGS. NO OTHER EXPLANATORY TEXT BEFORE OR AFTER THE CODE BLOCK.
+
 TASK: Create Python code to generate a complete musical loop in the {style} style.
 
 AVAILABLE INSTRUMENTS:
-""" + instrument_list + """
+''' + instrument_list + '''
 
 PRETTY_MIDI REFERENCE DOCUMENTATION:
-""" + pretty_midi_docs + """
+''' + pretty_midi_docs + '''
 
-INSTRUCTIONS:
-1. Write Python code using the `pretty_midi` library to create a musical loop in the {style} style.
-2. Use appropriate instruments for {style} - don't be limited to just drums! Choose from:
-   - Percussion instruments (program=0, is_drum=True)
-   - Melodic instruments from the instrument list above
-   - Bass instruments (program numbers 32-39)
-   - Harmony/chord instruments (pianos, guitars, pads)
-3. **CRITICAL: `pretty_midi.Instrument` does NOT accept a `bank` argument. To select a drum kit, use `is_drum=True` and the correct `program` number (usually 0 for the default kit). Bank selection (like bank 128 for specific drum kits) is handled by the MIDI player, not in this code.**
-4. Create a cohesive and emotionally impactful piece with:
-   - Clear rhythmic foundation
-   - Bass elements that support the harmony
-   - Melodic elements that express the style
-   - Appropriate harmony and chord progressions
-5. Add dynamics, effects suggestions, and instrument detuning as appropriate for authenticity.
-6. **CRITICAL:** The code MUST save the final MIDI object to a file path specified by the variable `output_path`. This variable will be provided to your code when executed.
-7. Return ONLY the Python code, wrapped in `<CODE>...</CODE>` tags.
+# ===== CRITICAL TIMING FRAMEWORK =====
+FOLLOW THIS EXACT FRAMEWORK for ALL music creation:
 
-SUCCESS CRITERIA:
-- Response contains ONLY the <CODE>...</CODE> block.
-- The code creates a complete musical arrangement appropriate for the {style}.
-- The code saves the result using `midi_object.write(output_path)`.
-- The code is executable Python.
-
-EXAMPLE RESPONSE:
-<CODE>
+```python
+import os
+output_path = os.environ['OUTPUT_PATH']
 import pretty_midi
+import numpy as np
 import random
 
-# Create a new MIDI file with appropriate tempo for the style
-midi = pretty_midi.PrettyMIDI(initial_tempo=120)
+# === STEP 1: Set up basic parameters ===
+bpm = 120  # Set appropriate tempo for {style}
+beat_length = 60.0 / bpm  # Duration of one beat in seconds
+bar_length = 4 * beat_length  # 4/4 time signature
+num_bars = 4  # Start with 4 bars for first iteration
 
-# Create instruments
+# === STEP 2: Create the MIDI object ===
+midi = pretty_midi.PrettyMIDI()
+
+# === STEP 3: Set up your instruments ===
+# Define ALL instruments first before adding notes
+instruments = []  # Store all instruments here
+
+# Example instrument setup:
+bass = pretty_midi.Instrument(program=33)  # Electric bass
 drums = pretty_midi.Instrument(program=0, is_drum=True)
-bass = pretty_midi.Instrument(program=33)  # Finger bass
-piano = pretty_midi.Instrument(program=0)  # Acoustic Piano
+# Add more instruments as needed...
 
-# Add percussion
-# [percussion pattern code]
+instruments.extend([bass, drums])  # Add all instruments to this list
 
-# Add bass line
-# [bass line code]
+# === STEP 4: Set up musical parameters ===
+# Define key, scale, chord progression here
+root_note = 60  # C4 (middle C)
+# For minor: [0, 2, 3, 5, 7, 8, 10]
+# For major: [0, 2, 4, 5, 7, 9, 11]
+scale_intervals = [0, 2, 3, 5, 7, 8, 10]  # Minor scale intervals
+# Create a scale from the root note
+scale = [root_note + interval for interval in scale_intervals]
+# Add octaves above and below
+full_scale = []
+for octave in [-1, 0, 1]:
+    full_scale.extend([note + (12 * octave) for note in scale])
 
-# Add piano chords
-# [piano chord code]
+# === STEP 5: Create a bar-beat grid and add notes ===
+# CRITICAL: ALL instruments MUST use this same grid
+for bar in range(num_bars):
+    # For each bar (4 beats per bar)
+    for beat in range(4):
+        # Calculate the exact time position
+        time = bar * bar_length + beat * beat_length
+        
+        # Add drums at this position (example)
+        if beat == 0:  # Kick on beat 1
+            drums.notes.append(pretty_midi.Note(
+                velocity=100, 
+                pitch=36,  # Bass drum
+                start=time, 
+                end=time + 0.1
+            ))
+        
+        # Add bass notes at this position (example)
+        if beat == 0 or beat == 2:  # Bass on beats 1 and 3
+            bass_note = scale[0] - 24  # Root note, 2 octaves down
+            bass.notes.append(pretty_midi.Note(
+                velocity=90,
+                pitch=bass_note,
+                start=time,
+                end=time + beat_length * 0.8  # Slightly detached
+            ))
 
-# Add all instruments to the MIDI file
-midi.instruments.extend([drums, bass, piano])
+# === STEP 6: Add instruments to MIDI ===
+# Add ALL defined instruments to the MIDI object
+for instrument in instruments:
+    midi.instruments.append(instrument)
 
-# Save the file
+# === STEP 7: Save the MIDI file ===
 midi.write(output_path)
-</CODE>
-"""
+```
 
+INSTRUCTIONS:
+1. Follow the EXACT FRAMEWORK provided above.
+2. Choose appropriate instruments for {style} using the instrument list.
+3. CRITICAL: ALL instruments must use the SAME bar-beat grid system.
+4. Follow these placement rules:
+   - Drums/percussion should use the standard General MIDI drum map
+   - Bass should follow the chord progression or root notes
+   - Lead instruments should play melody within the scale
+   - Harmony instruments should use chords from the progression
+
+5. SIMPLICITY is CRITICAL for the first iteration:
+   - Use only 1-3 instruments
+   - Keep rhythms straightforward and repetitive
+   - Use a simple 4-bar loop with a clear beat
+   - Ensure all instruments start and end at bar boundaries
+
+6. ALWAYS save to the path specified by the environment variable:
+   ```python
+   import os
+   output_path = os.environ['OUTPUT_PATH']
+   ```
+
+SUCCESS CRITERIA:
+- Code is executable Python with no syntax errors
+- Notes for all instruments align perfectly to the bar-beat grid
+- Music follows established conventions for {style}
+- All instruments play for the entire duration
+- Output is saved to the correct path
+
+IMPORTANT: For this first iteration, use only one instrument (e.g., piano, bass, or drums). Focus on a clear, memorable motif or rhythm. Make it catchy, clear, and easy to follow.
+
+FINAL AND ABSOLUTELY CRITICAL REMINDER: YOUR RESPONSE MUST BE *ONLY* THE PYTHON CODE, WRAPPED IN `<CODE>...</CODE>` TAGS. NO OTHER TEXT, NO EXPLANATIONS, NO INTRODUCTIONS, NO SUMMARIES. JUST THE CODE BLOCK.
+'''
+
+# ================================
+# MUTATION PROMPT
+# ================================
 mutate_prompt_template = f"""
 TASK: Transform and enhance the existing music based on feedback and {{style}} genre characteristics.
 
@@ -231,260 +489,205 @@ AVAILABLE INSTRUMENTS:
 PRETTY_MIDI REFERENCE DOCUMENTATION:
 {pretty_midi_docs}
 
-INSTRUCTIONS:
-1. ALWAYS FOLLOW THIS CODE STRUCTURE PRECISELY:
-   ```python
-   # Step 1: Import ALL necessary libraries explicitly
-   import pretty_midi
-   import numpy as np
-   import random
-   
-   # Step 2: Load the existing MIDI file
-   midi = pretty_midi.PrettyMIDI(midi_path)
-   
-   # Step 3: Define timing variables (ALWAYS include these exact variables)
-   bpm = midi.get_tempo_changes()[1][0] if len(midi.get_tempo_changes()[1]) > 0 else 120
-   beat_dur = 60 / bpm
-   bar_duration = 4 * beat_dur
-   loop_dur = midi.get_end_time()
-   num_bars = int(loop_dur // bar_duration)
-   
-   # Step 4: Define any helper functions you need
-   
-   # Step 5: Access and modify existing instruments
-   
-   # Step 6: Add new instruments
-   
-   # Step 7: Save the modified MIDI
-   midi.write(output_path)
-   ```
+# ===== PERFECT TIMING FRAMEWORK =====
+FOLLOW THIS EXACT FRAMEWORK for extending/enhancing music:
 
-2. CRITICAL INSTRUMENT CREATION RULES:
-   - ALWAYS use this exact syntax when creating new instruments:
-     ```python
-     # For regular instruments
-     new_inst = pretty_midi.Instrument(program=65)  # Example: 65 = Saxophone
-     
-     # For drums (NEVER use 'bank' parameter)
-     drums = pretty_midi.Instrument(program=0, is_drum=True)
-     ```
-   
-   - NO SHORTCUTS: Always define instrument variables fully before using them.
-   - VALIDATION: After creating any instrument, append it to the MIDI object
-     ```python
-     midi.instruments.append(new_inst)
-     ```
-
-3. CRITICAL NOTE CREATION RULES:
-   - ALWAYS convert note names to MIDI numbers:
-     ```python
-     pitch = pretty_midi.note_name_to_number('C4')
-     new_note = pretty_midi.Note(velocity=100, pitch=pitch, start=0.0, end=1.0)
-     instrument.notes.append(new_note)
-     ```
-   - ALWAYS use numeric variables for pitches, not string literals.
-   - ALWAYS ensure start time < end time for all notes.
-
-4. FORBIDDEN PRACTICES (WILL CAUSE ERRORS):
-   - DO NOT use 'bank' parameter in Instrument()
-   - DO NOT pass string note names directly to Note() constructor
-   - DO NOT use undefined variables (especially instruments or notes)
-   - DO NOT use positional arguments after keyword arguments
-
-5. Load the existing MIDI file, identify existing instruments, and modify/enhance them as needed.
-   Analyze the instruments by category:
-   ```python
-   # Analyze existing instruments
-   existing_programs = [inst.program for inst in midi.instruments]
-   has_drums = any(inst.is_drum for inst in midi.instruments)
-   has_bass = any(32 <= inst.program <= 39 for inst in midi.instruments)
-   has_lead = any(inst.program in [65, 56, 73] for inst in midi.instruments)
-   ```
-
-6. When enhancing the song, choose from these proven approaches:
-   - Add a new complementary instrument (carefully follow instrument creation rules)
-   - Enhance existing instrument patterns while preserving their core identity
-   - Adjust velocities to create better dynamics
-   - Add variations to existing patterns rather than completely replacing them
-
-7. EXAMPLES OF RELIABLE CODE:
-
-   EXAMPLE: Adding a new bass line
-   ```python
-   # Add a new bass instrument
-   bass = pretty_midi.Instrument(program=33)  # Electric bass
-   
-   # Define a bass pattern
-   bass_notes = ['E2', 'G2', 'A2', 'B2']
-   bass_pitches = [pretty_midi.note_name_to_number(note) for note in bass_notes]
-   
-   for bar in range(num_bars):
-       for i, pitch in enumerate(bass_pitches):
-           start = bar * bar_duration + i * beat_dur
-           end = start + 0.9 * beat_dur
-           bass.notes.append(pretty_midi.Note(velocity=80, pitch=pitch, start=start, end=end))
-   
-   # Add bass to the MIDI
-   midi.instruments.append(bass)
-   ```
-
-SUCCESS CRITERIA:
-- Response contains ONLY the <CODE>...</CODE> block.
-- The code MUST load the existing MIDI file from midi_path.
-- The code MUST save the final MIDI to output_path.
-- All instruments and notes MUST be properly defined before use.
-- All notes MUST use numeric pitch values, not string note names.
-- The code MUST be executable Python with no syntax errors.
-
-RELIABLE WORKING EXAMPLE:
-<CODE>
+```python
+import os
+output_path = os.environ['OUTPUT_PATH']
 import pretty_midi
 import numpy as np
 import random
 
-# Load the existing MIDI file
+# === STEP 1: Load the existing MIDI file ===
+midi_path = '{{midi_path}}'
 midi = pretty_midi.PrettyMIDI(midi_path)
 
-# Define timing variables
+# === STEP 2: Extract timing information ===
+# Ensure we use the existing tempo
 bpm = midi.get_tempo_changes()[1][0] if len(midi.get_tempo_changes()[1]) > 0 else 120
-beat_dur = 60 / bpm
-bar_duration = 4 * beat_dur
-loop_dur = midi.get_end_time()
-num_bars = int(loop_dur // bar_duration)
+beat_length = 60.0 / bpm
+bar_length = 4 * beat_length  # Assuming 4/4 time signature
+loop_duration = midi.get_end_time() # Raw end time
+num_bars = int(round(loop_duration / bar_length)) # Calculate num_bars robustly
+exact_loop_duration_for_doubling = num_bars * bar_length # CRITICAL: Use this for precise doubling
 
-# Analyze existing instruments
-existing_programs = [inst.program for inst in midi.instruments]
-has_drums = any(inst.is_drum for inst in midi.instruments)
-has_bass = any(32 <= inst.program <= 39 for inst in midi.instruments)
+# === STEP 3: Identify existing instruments ===
+# Always inspect what's already in the MIDI file
+existing_instruments = midi.instruments
+has_drums = any(inst.is_drum for inst in existing_instruments)
+has_bass = any(32 <= inst.program <= 39 for inst in existing_instruments)
+instrument_count = len(existing_instruments)
+total_bars_after_doubling = num_bars * 2
 
-# Add a lead guitar if it doesn't exist
-if not any(inst.program == 28 for inst in midi.instruments):
-    lead_guitar = pretty_midi.Instrument(program=28)  # Electric Guitar
-    
-    # Create a simple melody
-    melody_notes = ['E4', 'G4', 'A4', 'B4']
-    melody_pitches = [pretty_midi.note_name_to_number(note) for note in melody_notes]
-    
-    for bar in range(num_bars):
-        for i, pitch in enumerate(melody_pitches):
-            start = bar * bar_duration + i * beat_dur
-            end = start + 0.8 * beat_dur
-            lead_guitar.notes.append(pretty_midi.Note(velocity=100, pitch=pitch, start=start, end=end))
-    
-    midi.instruments.append(lead_guitar)
-
-# Enhance existing drums if they exist
+# === STEP 4: DOUBLE THE LENGTH (copy everything forward) ===
+# Apply to ALL instruments consistently using the exact calculated duration
 for instrument in midi.instruments:
-    if instrument.is_drum:
-        # Add some additional cymbal hits
-        for bar in range(num_bars):
-            # Add crash cymbal on the first beat of every other bar
-            if bar % 2 == 0:
-                crash = pretty_midi.Note(velocity=100, pitch=49, start=bar * bar_duration, end=bar * bar_duration + 2 * beat_dur)
-                instrument.notes.append(crash)
+    original_notes = instrument.notes.copy()
+    for note in original_notes:
+        # Create a new note copy, shifted by exact original duration
+        new_note = pretty_midi.Note(
+            velocity=note.velocity,
+            pitch=note.pitch,
+            start=note.start + exact_loop_duration_for_doubling,
+            end=note.end + exact_loop_duration_for_doubling
+        )
+        instrument.notes.append(new_note)
 
-# Save the modified MIDI
+# === STEP 5: Add new instruments OR enhance existing ones ===
+# New instruments must follow the EXACT SAME bar-beat grid and span total_bars_after_doubling
+# Example of how to add a new instrument (e.g., a synth lead):
+# synth_lead = pretty_midi.Instrument(program=81) # Lead 2 (sawtooth)
+# for bar in range(total_bars_after_doubling):
+#     for beat in range(4): # Assuming 4 beats per bar
+#         time = bar * bar_length + beat * beat_length
+#         # Add notes for synth_lead, ensuring they use 'time', 'beat_length'
+#         # and the new part spans all 'total_bars_after_doubling'
+# if synth_lead.notes: # Only add if notes were actually added
+#    midi.instruments.append(synth_lead)
+
+# Example of how to enhance an existing drum track (if drums exist)
+# drum_instrument = next((inst for inst in midi.instruments if inst.is_drum), None)
+# if drum_instrument:
+#     for bar in range(total_bars_after_doubling):
+#         # Add new drum notes (e.g. a cymbal pattern) for the entire new duration
+#         # Ensure to use 'bar * bar_length + beat * beat_length' for timing
+#         pass # Replace with actual note adding logic
+
+# === STEP 6: Save the modified MIDI file ===
 midi.write(output_path)
-</CODE>
+```
+
+INSTRUCTIONS:
+0. **MANDATORY ADHERENCE TO FRAMEWORK**: The Python code framework provided above under "# ===== PERFECT TIMING FRAMEWORK =====" is NOT a suggestion. It is a STRICT TEMPLATE. You MUST follow its structure, variable names (`bpm`, `beat_length`, `bar_length`, `num_bars`, `exact_loop_duration_for_doubling`, `total_bars_after_doubling`), and logic for ALL timing calculations, song doubling, and instrument part generation. DEVIATION WILL LEAD TO TIMING ERRORS.
+1. ALWAYS follow the EXACT FRAMEWORK above to ensure perfect timing.
+2. CRITICAL: With each mutation, you MUST DOUBLE the length of the song from the previous iteration using `exact_loop_duration_for_doubling` as the offset for copied notes. The new total length will be `total_bars_after_doubling`.
+3. Follow these TIMING RULES exactly:
+   - ALWAYS use the bar-beat grid system based on the `bpm`, `beat_length`, and `bar_length` calculated in STEP 2.
+   - NEVER add arbitrary time offsets to notes. All note `start` and `end` times MUST be calculated relative to `bar * bar_length + beat * beat_length` (or sub-beat divisions thereof).
+   - ALL instruments (existing and new) must operate on this single, unified timing grid.
+   - NEW instruments must follow the SAME bar-beat grid as existing ones.
+   - ALL new notes must align PERFECTLY to beat divisions.
+
+4. When enhancing the song:
+   - First, CRITICALLY, ensure the entire song's length is doubled using the `exact_loop_duration_for_doubling` for note offsets, as shown in STEP 4. The song will now span `total_bars_after_doubling`.
+   - Then, add 1-2 NEW instruments or create NEW patterns for existing instruments.
+   - **CRUCIAL FOR COHESION**: Any NEW instrument patterns or ENHANCEMENTS to existing instruments MUST be written to span the **ENTIRE new `total_bars_after_doubling` duration**.
+   - AVOID adding new musical material that only exists for a small fraction of the `total_bars_after_doubling`. The goal is to extend the *whole song* cohesively.
+   - New musical parts should complement the existing (doubled) parts rhythmically and harmonically across the entire `total_bars_after_doubling`.
+   - Maintain consistent motifs and patterns within each instrument across the `total_bars_after_doubling`, unless you are consciously evolving the pattern throughout the entire new length.
+   
+5. THINK LIKE A COMPOSER FOR THE FULL (`total_bars_after_doubling`) LENGTH:
+   - ALL instruments MUST adhere to the same global `bpm`, `beat_length`, and `bar_length`. All note placements must use the shared bar-beat grid.
+   - When the song length is doubled to `total_bars_after_doubling`, ensure that any new musical ideas (new instruments, new patterns for existing instruments) are developed to span this **entire `total_bars_after_doubling` duration**.
+   - Bass lines should provide a foundation for the chord progression across all `total_bars_after_doubling`.
+   - Drum patterns should provide a consistent rhythmic framework for all `total_bars_after_doubling`.
+   - Melodies and harmonies should relate to the scale and chords across all `total_bars_after_doubling`.
+   - Strive for a balanced and cohesive musical experience throughout the entire extended piece.
+
+6. AVOID THESE COMMON MISTAKES:
+   - **Re-calculating or defining new `bpm`, `beat_length`, or `bar_length` variables when adding new parts. ALWAYS use the globally defined ones from STEP 2 of the framework.**
+   - Using `midi.get_end_time()` or `loop_duration` directly as the offset for doubling notes. ALWAYS use `exact_loop_duration_for_doubling` (calculated as `num_bars * bar_length`) for perfect alignment as shown in STEP 4.
+   - Different timing logic or independent timing loops for different instruments.
+   - Instruments with different pattern lengths that don't span `total_bars_after_doubling`.
+   - Random or arbitrary time placements not tied to the `bar * bar_length + beat * beat_length` grid.
+   - Using note strings instead of MIDI note numbers.
+   - Forgetting to append new instruments to `midi.instruments`.
+
+7. VALIDATION: Always check your timing logic by verifying:
+   - All instruments use the same `bpm`, `bar_length` and `beat_length` variables defined in STEP 2.
+   - All notes are placed using the `bar * bar_length + beat * beat_length` grid system.
+   - The new song length (i.e., `midi.get_end_time()` after all modifications) is approximately `exact_loop_duration_for_doubling * 2` (or `total_bars_after_doubling * bar_length`).
+   - All new instrument parts are written to span the full `total_bars_after_doubling`.
+
+SUCCESS CRITERIA:
+- Code doubles the length of the song perfectly using `exact_loop_duration_for_doubling`.
+- All instruments (original, copied, and new) remain perfectly synchronized on the shared timing grid.
+- New instruments and patterns complement existing ones and span the entire `total_bars_after_doubling`.
+- All notes align to the bar-beat grid.
+- Code is executable with no errors.
+- The file is saved to the specified output_path.
+
+RETURN ONLY the Python code, wrapped in `<CODE>...</CODE>` tags.
 """
 
-analyze_prompt = """
-Analyze the rendered audio in detail. Provide comprehensive feedback on:
-
-1. Overall musicality and genre authenticity
-2. Instrument balance and selection
-3. Rhythm, melody, and harmony quality
-4. Emotional impact
-5. Technical execution
-6. Specific suggestions for improvement in the next iteration
-
-Focus on specific, actionable feedback that would help create more authentic and compelling music in this genre.
-""" # This prompt is used when analysis feedback is needed 
-
+# ================================
+# REFACTORING PROMPT
+# ================================
 refactor_prompt_template = f"""
-TASK: Fix the provided Python code based on the error message.
+TASK: Fix the code that failed to execute or had timing issues.
 
-ORIGINAL GOAL:
-{{original_prompt}}
+ERROR INFORMATION:
+{{error}}
 
-FAULTY CODE:
+ORIGINAL CODE:
 <CODE>
-{{faulty_code}}
+{{previous_code}}
 </CODE>
-
-ERROR MESSAGE:
-{{error_message}}
 
 PRETTY_MIDI REFERENCE DOCUMENTATION:
 {pretty_midi_docs}
 
-INSTRUCTIONS:
-1. ANALYZE THE ERROR CAREFULLY. Common errors and their fixes:
+CRITICAL TIMING PROBLEMS TO FIX:
+1. Check for reference to undefined variables (especially midi.initial_tempo)
+2. Verify all instruments use the SAME timing variables (bpm, beat_length, bar_length)
+3. Ensure no arbitrary time offsets are used - all notes should align to a beat grid
+4. Check for instruments or notes created but not properly added to the MIDI object
+5. Ensure all instruments have a consistent pattern length and are aligned to bar boundaries
 
-   • `NameError: name 'X' is not defined`:
-     - Define the missing variable before using it
-     - Check for typos in variable names
-     - Ensure all instrument variables are defined with pretty_midi.Instrument()
-   
-   • `TypeError: __init__() got an unexpected keyword argument 'bank'`:
-     - Remove all 'bank' parameters from pretty_midi.Instrument()
-     - For drums, use program=0, is_drum=True instead
-   
-   • `SyntaxError: positional argument follows keyword argument`:
-     - Reorder arguments to put all positional arguments before keyword arguments
-     - Convert positional arguments to keyword arguments
-   
-   • `TypeError: string indices must be integers`:
-     - Ensure note names are converted to integers with pretty_midi.note_name_to_number()
-     - Never use string note names directly in pretty_midi.Note() constructor
+THE PERFECT PATTERN:
+```python
+# All music creation must follow this standard pattern
+import os
+output_path = os.environ['OUTPUT_PATH']
+import pretty_midi
 
-2. ALWAYS START BY FIXING THE IMPORTS AND BASIC STRUCTURE:
-   ```python
-   import pretty_midi
-   import numpy as np
-   import random
-   
-   # Load the MIDI file
-   midi = pretty_midi.PrettyMIDI(midi_path)
-   
-   # Define timing variables
-   bpm = midi.get_tempo_changes()[1][0] if len(midi.get_tempo_changes()[1]) > 0 else 120
-   beat_dur = 60 / bpm
-   bar_duration = 4 * beat_dur
-   loop_dur = midi.get_end_time()
-   num_bars = int(loop_dur // bar_duration)
-   ```
+# Set timing parameters ONE time for ALL instruments
+bpm = 120  # or another appropriate value
+beat_length = 60.0 / bpm
+bar_length = 4 * beat_length  # 4 beats per bar in 4/4 time
 
-3. LOOK FOR THESE COMMON PROBLEMS:
-   • Undefined instruments: Check all instrument variables are defined before use
-   • Missing .append(): Ensure all new instruments are added to midi.instruments
-   • String note names: Replace with pretty_midi.note_name_to_number() conversion
-   • Missing imports: Add all required imports at the beginning
-   • Timing calculations: Fix any errors in start/end time calculations
+# Create instruments before adding any notes
+bass = pretty_midi.Instrument(program=33)  # Electric bass
+drums = pretty_midi.Instrument(program=0, is_drum=True)
 
-4. WHEN IN DOUBT, FOLLOW THIS RELIABLE PATTERN:
-   ```python
-   # Create instrument (NEVER use 'bank' parameter)
-   instrument = pretty_midi.Instrument(program=0, is_drum=True)  # For drums
-   # OR
-   instrument = pretty_midi.Instrument(program=28)  # For regular instruments
-   
-   # Add notes to instrument (ALWAYS convert string notes to MIDI pitch numbers)
-   notes = ['C4', 'E4', 'G4']
-   pitches = [pretty_midi.note_name_to_number(note) for note in notes]
-   
-   for pitch in pitches:
-       note = pretty_midi.Note(velocity=100, pitch=pitch, start=0.0, end=1.0)
-       instrument.notes.append(note)
-   
-   # Add instrument to MIDI
-   midi.instruments.append(instrument)
-   
-   # Save the MIDI
-   midi.write(output_path)
-   ```
+# Use a bar-beat grid for ALL instruments
+for bar in range(4):  # Number of bars
+    for beat in range(4):  # 4 beats per bar
+        time = bar * bar_length + beat * beat_length
+        
+        # Add notes for ALL instruments referenced to this same grid
+        if beat == 0:  # On downbeat
+            bass.notes.append(pretty_midi.Note(
+                velocity=100,
+                pitch=40,  # E2
+                start=time,
+                end=time + beat_length * 0.8
+            ))
+            
+            drums.notes.append(pretty_midi.Note(
+                velocity=100,
+                pitch=36,  # Kick drum
+                start=time,
+                end=time + 0.1
+            ))
 
-5. FOCUS ON FIXING THE SPECIFIC ERROR, while preserving the original musical intent.
+# Add ALL instruments to the MIDI file
+midi = pretty_midi.PrettyMIDI()
+midi.instruments.append(bass)
+midi.instruments.append(drums)
 
-Your response MUST contain ONLY corrected Python code within <CODE>...</CODE> tags.
-""" 
+# Save the file
+midi.write(output_path)
+```
+
+GUIDELINES FOR FIXING:
+1. Keep the musical intent of the original code, but fix ALL timing issues
+2. Make sure ALL instruments use the SAME timing variables and grid system
+3. Remove any references to undefined variables (e.g., midi.initial_tempo)
+4. Ensure all notes are positioned using bar-beat grid logic, NOT arbitrary offsets
+5. Verify that ALL instruments and notes are properly added to the MIDI object
+6. Create a central timing system that ALL instruments follow.
+RETURN ONLY the fixed Python code, wrapped in `<CODE>...</CODE>` tags.
+
+"""

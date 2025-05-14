@@ -14,6 +14,8 @@ import sounddevice as sd
 import websocket
 import threading
 from queue import Queue, Empty
+import subprocess
+import tempfile
 
 from agents import Agent, Runner, ModelSettings, function_tool, RunContextWrapper
 # Removed: from agents.result import Result
@@ -22,10 +24,10 @@ import prompts
 import state_manager
 
 # Import only necessary tool and Pydantic model
-from midi_writer import mutate_loop_impl, mutate_loop, MutationParams
+# from midi_writer import mutate_loop_impl, mutate_loop, MutationParams
 from midi_player import _play_midi_impl  # Import the direct playback function
 # from audio_analyzer import analyze_audio, analyze_audio_gpt4o
-from criteria_agent import get_genre_evaluation_criteria
+from criteria_agent import get_genre_evaluation_criteria, get_style_rules
 from fancy_spinner import SimpleSpinner
 
 # Define a simple context object (can be expanded)
@@ -33,27 +35,6 @@ class MusicContext:
     def __init__(self, soundfont_path: str):
         self.soundfont_path = soundfont_path
 
-# UNDERTALE instrument mapping for authenticity (program numbers and detuning)
-UNDERTALE_INSTRUMENT_MAP = {
-    # Example entries; expand as needed for full coverage
-    'Undertale Piano': {'program': 0, 'detune': 0},
-    'Acoustic Bass': {'program': 32, 'detune': -2},
-    'Fretless Bass': {'program': 35, 'detune': 0},
-    'Glockenspiel': {'program': 9, 'detune': -4},
-    'Strings': {'program': 48, 'detune': -4},
-    'Piano 1': {'program': 0, 'detune': 5},
-    'Violin': {'program': 40, 'detune': 0},
-    'Saxophone': {'program': 65, 'detune': 0},
-    'Trumpet': {'program': 56, 'detune': 0},
-    # ... add more mappings as needed ...
-}
-
-def get_undertale_instrument_info(name):
-    """Return program number and detune for a given instrument name, or defaults if not found."""
-    info = UNDERTALE_INSTRUMENT_MAP.get(name)
-    if info:
-        return info['program'], info['detune']
-    return 0, 0  # Default to program 0, no detune
 
 class MusicAgent:
     # Update __init__ signature
@@ -77,6 +58,10 @@ class MusicAgent:
         print(f"[criteria] Getting evaluation criteria for genre: {self.style}")
         self.criteria = get_genre_evaluation_criteria(self.style, self.api_key)
         print(f"[criteria] Using criteria: {self.criteria}")
+        
+        # Get style-specific guardrails
+        self.style_rules = get_style_rules(self.style)
+        print(f"[style] Loaded style-specific guardrails for: {self.style}")
 
         # System prompt now includes instrument list directly from prompts.py
         # formatted_system_prompt = prompts.system_prompt.format(style=self.style) # No longer needed
@@ -87,47 +72,91 @@ class MusicAgent:
             name="Music Composer",
             instructions=prompts.system_prompt, # Use the prompt directly
             model="gpt-4.1", # Adjusted model name
-            tools=[mutate_loop] 
+            tools=[] 
         )
+
+    def _extract_code_block(self, agent_response_content):
+        match = re.search(r"<CODE>(.*?)</CODE>", agent_response_content, re.DOTALL | re.IGNORECASE)
+        if not match:
+            raise ValueError("No <CODE>...</CODE> block found in agent response.")
+        return match.group(1).strip()
+
+    def _execute_code(self, code, output_path, timeout=15):
+        with tempfile.NamedTemporaryFile('w', suffix='.py', delete=False) as f:
+            f.write(code)
+            code_path = f.name
+        env = os.environ.copy()
+        env['OUTPUT_PATH'] = output_path
+        try:
+            result = subprocess.run(
+                ['python', code_path],
+                capture_output=True,
+                text=True,
+                timeout=timeout,
+                env=env
+            )
+            if result.returncode != 0:
+                raise RuntimeError(f"Code execution failed: {result.stderr}")
+            if not os.path.exists(output_path):
+                raise FileNotFoundError(f"Expected output file not created: {output_path}")
+        finally:
+            os.remove(code_path)
 
     async def _run_single_iteration(self, iteration_num):
         print(f"\n--- Iteration {iteration_num} ---")
-
-        # Determine unique paths for this iteration
         midi_output_path = os.path.join(self.run_dir, f"loop_{iteration_num}.mid")
         wav_output_path = os.path.join(self.run_dir, f"loop_{iteration_num}.wav")
-        last_midi_path = self.memory['iterations'][-1].get('midi_path') if iteration_num > 1 else None
-        
+        agent_action_prompt = None
+        if iteration_num == 1:
+            # Special prompt for first pass: one instrument, simple motif, and colorful stylistic suggestions
+            # Now with more integrated style guidelines
+            agent_action_prompt = f"""
+{prompts.compose_prompt_template.format(style=self.style)}
+
+IMPORTANT: For this first iteration, use only one instrument (e.g., piano, bass, or drums). Do not add harmony, chords, or additional instruments. Focus on a clear, memorable motif or rhythm. Make it catchy, clear, and easy to follow.
+
+STYLISTIC GUIDELINES FOR {self.style.upper()}:
+{self.style_rules}
+
+Remember these are stylistic suggestions, not rigid requirements. Feel free to explore creatively within these general guidelines.
+"""
+        else:
+            last_midi_path = self.memory['iterations'][-1].get('midi_path') if iteration_num > 1 else None
+            last_iteration = self.memory['iterations'][-1]
+            analysis_data = last_iteration.get('analysis', {})
+            previous_code = last_iteration.get('python_code', '# No code from previous iteration found')
+            if isinstance(analysis_data, dict):
+                analysis_str = "\n".join([f"- {key.replace('_', ' ').title()}: {value}" for key, value in analysis_data.items()])
+            else:
+                analysis_str = str(analysis_data)
+            analysis_str = f"CURRENT ITERATION: {iteration_num}\n\n" + analysis_str
+            
+            # More integrated styling guidelines in the mutation prompt
+            agent_action_prompt = f"""
+{prompts.mutate_prompt_template.format(
+    style=self.style,
+    analysis=analysis_str,
+    midi_path=last_midi_path,
+    previous_code=previous_code
+)}
+
+When continuing to develop this {self.style} piece, consider these stylistic elements:
+{self.style_rules}
+
+These are suggestions to help maintain genre authenticity while you evolve the composition. Feel free to interpret them creatively.
+"""
+        print(f"[agent] Requesting Python code for composition in style: {self.style}")
+
         agent_result = None
-        agent_action_prompt = ""
         tool_name = None
         current_midi_path = None
         agent_response_content = None
 
         # 1. Agent decides action (Compose or Mutate)
         if iteration_num == 1:
-            agent_action_prompt = prompts.compose_prompt_template.format(style=self.style)
             tool_name = 'new_loop' # Internal flag, not a tool call anymore
             print(f"[agent] Requesting Python code for initial composition in style: {self.style}")
         else:
-            last_iteration = self.memory['iterations'][-1]
-            analysis_data = last_iteration.get('analysis', {})
-            previous_code = last_iteration.get('python_code', '# No code from previous iteration found')
-            # Format analysis data for the prompt
-            if isinstance(analysis_data, dict):
-                analysis_str = "\n".join([f"- {key.replace('_', ' ').title()}: {value}" for key, value in analysis_data.items()])
-            else: # Handle case where analysis might be a string (e.g., error message)
-                analysis_str = str(analysis_data)
-            
-            # Add iteration number explicitly to the analysis so the agent knows which instrument to add
-            analysis_str = f"CURRENT ITERATION: {iteration_num}\n\n" + analysis_str
-            
-            agent_action_prompt = prompts.mutate_prompt_template.format(
-                style=self.style,
-                analysis=analysis_str, # Pass formatted analysis with iteration number
-                midi_path=last_midi_path,
-                previous_code=previous_code # Pass the previous code here
-            )
             tool_name = 'mutate_loop'
             print(f"[agent] Requesting mutation for ITERATION {iteration_num} - adding new instrument layer")
 
@@ -162,59 +191,18 @@ class MusicAgent:
                 while retry_count <= max_retries:
                     try:
                         if tool_name == 'new_loop':
-                            match = re.search(r"<CODE>(.*?)</CODE>", agent_response_content, re.DOTALL | re.IGNORECASE)
-                            if not match:
-                                print(f"[agent] Error: No <CODE>...</CODE> block found. Retrying prompt if possible ({retry_count}/{max_retries})")
-                                if retry_count == max_retries: return True
-                                agent_response_content = await self._retry_prompt(agent_action_prompt, run_context)
-                                retry_count += 1
-                                continue
-                            python_code = match.group(1).strip()
+                            python_code = self._extract_code_block(agent_response_content)
                             current_python_code = python_code
-                            execution_globals = {"pretty_midi": pretty_midi, "random": random, "os": os, "np": np, "__builtins__": { 'print': print, 'range': range, 'len': len, 'max': max, 'min': min, 'round': round, 'list': list, 'dict': dict, 'str': str, 'int': int, 'float': float, 'bool': bool, 'None': None, '__import__': __import__, 'enumerate': enumerate, 'zip': zip, 'map': map, 'filter': filter, 'abs': abs, 'sum': sum, 'any': any, 'all': all, 'sorted': sorted, 'tuple': tuple, 'set': set, }, 'get_undertale_instrument_info': get_undertale_instrument_info }
-                            execution_locals = {"output_path": midi_output_path}
-                            exec(python_code, execution_globals, execution_locals)
-                            if not os.path.exists(midi_output_path):
-                                raise FileNotFoundError(f"Code execution did not create the expected file: {midi_output_path}")
+                            self._execute_code(python_code, midi_output_path)
                             current_midi_path = midi_output_path
                             break # Success!
 
                         elif tool_name == 'mutate_loop':
-                            match_code = re.search(r"<CODE>(.*?)</CODE>", agent_response_content, re.DOTALL | re.IGNORECASE)
-                            if match_code:
-                                python_code = match_code.group(1).strip()
-                                current_python_code = python_code
-                                execution_globals = {"pretty_midi": pretty_midi, "random": random, "os": os, "np": np, "__builtins__": { 'print': print, 'range': range, 'len': len, 'max': max, 'min': min, 'round': round, 'list': list, 'dict': dict, 'str': str, 'int': int, 'float': float, 'bool': bool, 'None': None, '__import__': __import__, 'enumerate': enumerate, 'zip': zip, 'map': map, 'filter': filter, 'abs': abs, 'sum': sum, 'any': any, 'all': all, 'sorted': sorted, 'tuple': tuple, 'set': set, }, 'get_undertale_instrument_info': get_undertale_instrument_info }
-                                execution_locals = {"output_path": midi_output_path, "midi_path": last_midi_path}
-                                exec(python_code, execution_globals, execution_locals)
-                                if not os.path.exists(midi_output_path):
-                                    raise FileNotFoundError(f"Code execution did not create the expected file: {midi_output_path}")
-                                current_midi_path = midi_output_path
-                                break # Success!
-                            else:
-                                # Fallback to PARAM PARAMS if no CODE block
-                                match_params = re.search(r"<PARAMS>(.*?)</PARAMS>", agent_response_content, re.DOTALL | re.IGNORECASE)
-                                if not match_params:
-                                    print(f"[agent] Error: No <CODE> or <PARAMS> block found. Retrying prompt if possible ({retry_count}/{max_retries})")
-                                    if retry_count == max_retries: return True
-                                    agent_response_content = await self._retry_prompt(agent_action_prompt, run_context)
-                                    retry_count += 1
-                                    continue
-                                params_str = match_params.group(1).strip()
-                                try:
-                                    params = json.loads(params_str)
-                                except json.JSONDecodeError as e:
-                                    print(f"[agent] Error parsing JSON <PARAMS>: {e}. Retrying prompt if possible ({retry_count}/{max_retries})")
-                                    if retry_count == max_retries: return True
-                                    agent_response_content = await self._retry_prompt(agent_action_prompt, run_context)
-                                    retry_count += 1
-                                    continue
-                                params['output_path'] = midi_output_path
-                                params['midi_path'] = last_midi_path
-                                print(f"[agent] Calling mutate_loop_impl with: {params}")
-                                params_obj = MutationParams(**params)
-                                current_midi_path = mutate_loop_impl(params_obj)
-                                break # Success!
+                            python_code = self._extract_code_block(agent_response_content)
+                            current_python_code = python_code
+                            self._execute_code(python_code, midi_output_path)
+                            current_midi_path = midi_output_path
+                            break # Success!
                         else:
                             print(f"[agent] Internal error: Unknown tool_name '{tool_name}'")
                             return True # Stop loop, unknown tool
@@ -246,14 +234,9 @@ class MusicAgent:
                            agent_response_content = refactor_result.final_output # Update with refactored response
                         
                         # Extract the potentially fixed code for the next loop iteration
-                        match_refactored = re.search(r"<CODE>(.*?)</CODE>", agent_response_content, re.DOTALL | re.IGNORECASE)
-                        if match_refactored:
-                            current_python_code = match_refactored.group(1).strip() # Update for next exec attempt
-                            # Note: We need to make sure the outer 'with Spinner' context exits properly
-                            # if refactoring happens. We'll rely on the loop continuing.
-                        else:
-                            print("[agent] Refactoring failed to produce code. Stopping.")
-                            return True # Stop loop
+                        current_python_code = self._extract_code_block(agent_response_content) # Update for next exec attempt
+                        # Note: We need to make sure the outer 'with Spinner' context exits properly
+                        # if refactoring happens. We'll rely on the loop continuing.
 
             # This part is outside the `with Spinner` block but inside the main try
             if not current_midi_path or not os.path.exists(current_midi_path):
@@ -269,16 +252,29 @@ class MusicAgent:
             return True # Stop loop on error
 
         # 2. Render MIDI to WAV (do not play)
-        print(f"[render] Rendering {current_midi_path} to {wav_output_path}...")
+        print(f"[render] Rendering {midi_output_path} to {wav_output_path}...")
         current_audio_path = None
         try:
             current_audio_path = _play_midi_impl(
-                midi_path=current_midi_path, 
+                midi_path=midi_output_path,
                 soundfont_path=self.soundfont_path,
-                output_wav=wav_output_path # Pass unique WAV path
+                output_wav=wav_output_path
             )
             if current_audio_path:
                 print(f"[render] Rendered audio: {current_audio_path}")
+                # Play audio in a background thread
+                def play_audio(path):
+                    try:
+                        import soundfile as sf
+                        import sounddevice as sd
+                        data, samplerate = sf.read(path)
+                        print(f"[Audio] Playing audio: {path}")
+                        sd.play(data, samplerate)
+                        sd.wait()
+                        print(f"[Audio] Audio playback finished.")
+                    except Exception as e:
+                        print(f"[Audio] Error during audio playback: {e}")
+                threading.Thread(target=play_audio, args=(current_audio_path,), daemon=True).start()
             else:
                 print(f"[render] Audio rendering failed. Check SoundFont path and errors.")
         except Exception as e:
@@ -336,114 +332,13 @@ class MusicAgent:
              time.sleep(1)
          print("\n[Agent Loop] Reached max iterations or stopped.")
 
-    def get_file_feedback(self, audio_path, api_key=None, prompt=None):
-        """
-        Gets feedback on an audio file using the chained approach:
-        1. Transcribe audio file to text using Whisper.
-        2. Send the transcript to GPT-4o for analysis using genre criteria.
-        """
-        if not os.path.exists(audio_path):
-            print(f"[Feedback] Audio file not found: {audio_path}")
-            return None
-        api_key = api_key or self.api_key
-        openai.api_key = api_key
-
-        try:
-            # Step 1: Transcribe the audio file
-            print(f"[Feedback] Transcribing audio file: {audio_path}")
-            with open(audio_path, "rb") as audio_file:
-                transcription_response = openai.audio.transcriptions.create(
-                    model="whisper-1",
-                    file=audio_file,
-                    language="en"
-                )
-            transcript = transcription_response.text if hasattr(transcription_response, 'text') else str(transcription_response)
-            print(f"[Feedback] Transcript: '{transcript}'")
-
-            # Step 2: Analyze the transcript with GPT-4o using criteria
-            if self.criteria and isinstance(self.criteria, list) and len(self.criteria) == 4:
-                criteria_str = "\n".join([f"- {c}" for c in self.criteria])
-                system_prompt_content = (
-                    f"You are a music critic specializing in {self.style}. "
-                    f"Evaluate the provided music loop transcript based on the following 4 criteria. "
-                    f"For each, give a score from 0-10 and a short comment. Also provide a brief overall summary.\n\n"
-                    f"Criteria:\n{criteria_str}\n\n"
-                    f"Focus on rhythm and implied musicality from the transcript, as melody/harmony might be absent or unclear. "
-                    f"Return ONLY a valid JSON object with keys: 'criteria_scores' (a list of dicts with 'criterion', 'score', 'comment'), and 'summary'."
-                )
-                print(f"[Feedback] Using genre criteria for analysis.")
-            else:
-                print(f"[Feedback] Using generic criteria for analysis (genre criteria missing or invalid).")
-                system_prompt_content = prompt or (
-                    "You are a music critic. Analyze the provided music loop transcript for tempo, key, instrumentation, and overall musical pleasantness. "
-                    "Consider that the transcript might be imperfect or only capture percussive sounds. Focus on the rhythm and implied musicality. "
-                    "Return ONLY a valid JSON object with keys: tempo, key, instrumentation, pleasantness, and a brief summary."
-                )
-
-            print(f"[Feedback] Sending transcript to GPT-4o for analysis...")
-            analysis_response = openai.chat.completions.create(
-                model="gpt-4o",
-                response_format={"type": "json_object"},
-                messages=[
-                    {"role": "system", "content": system_prompt_content},
-                    {"role": "user", "content": transcript or "(No transcript generated - likely silence)"}
-                ]
-            )
-            content = analysis_response.choices[0].message.content
-            print("[Feedback] GPT-4o analysis response:", content)
-            try:
-                json.loads(content)
-            except json.JSONDecodeError:
-                print("[Feedback] Warning: GPT-4o response is not valid JSON. Returning raw string.")
-            return content
-
-        except Exception as e:
-            print(f"[Feedback] Error during chained audio analysis: {e}")
-            return None
-
     def run_agentic_realtime_loop(self, max_iterations=10):
-        """
-        Unified agentic loop: generate/mutate, render, send file for feedback (async), play, inject feedback, repeat.
-        """
         for i in range(1, max_iterations + 1):
             print(f"\n=== Iteration {i} ===")
             stop_signal = asyncio.run(self._run_single_iteration(i))
             if stop_signal:
                 print("[Agentic Loop] Stopping based on agent's internal logic.")
                 break
-            last_iter = self.memory['iterations'][-1]
-            audio_path = last_iter['audio_path']
-            if not audio_path or not os.path.exists(audio_path):
-                print(f"[Agentic Loop] No audio file found for iteration {i}, skipping feedback.")
-                continue
-            print(f"[Agentic Loop] Sending audio file for GPT-4o feedback: {audio_path}")
-            feedback_result = {}
-            def feedback_task():
-                feedback = self.get_file_feedback(audio_path)
-                feedback_result['feedback'] = feedback
-            feedback_thread = threading.Thread(target=feedback_task)
-            feedback_thread.start()
-            # Play audio while feedback is processing
-            try:
-                import soundfile as sf
-                import sounddevice as sd
-                data, samplerate = sf.read(audio_path)
-                print(f"[Agentic Loop] Playing audio: {audio_path}")
-                sd.play(data, samplerate)
-                sd.wait()
-                print(f"[Agentic Loop] Audio playback finished.")
-            except Exception as e:
-                print(f"[Agentic Loop] Error during audio playback: {e}")
-            # Wait for feedback to finish if not done
-            feedback_thread.join()
-            feedback = feedback_result.get('feedback')
-            if feedback:
-                feedback_dict = {"gpt4o_file_feedback": feedback}
-                self.memory['iterations'][-1]['analysis'] = feedback_dict
-                print(f"[Agentic Loop] Injected file feedback.")
-            else:
-                print("[Agentic Loop] No feedback received from GPT-4o.")
-            # Save state after feedback
             state_manager.save_state(self.memory, os.path.join(self.run_dir, 'agent_state.json'))
             print(f"[Agentic Loop] State saved for iteration {i}.")
             time.sleep(1)

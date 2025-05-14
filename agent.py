@@ -8,7 +8,7 @@ def main():
     api_key = os.getenv('OPENAI_API_KEY')
     soundfont_path = os.getenv('SOUND_FONT_PATH')
     if not soundfont_path:
-        soundfont_path = os.path.join('music', 'undertale.sf2')
+        soundfont_path = os.path.join('music', 'weedsgm3.sf2')
     if not api_key or not soundfont_path:
         print("Missing OPENAI_API_KEY or SOUND_FONT_PATH in environment.")
         return
