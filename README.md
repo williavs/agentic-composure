@@ -11,7 +11,6 @@ A terminal-based autonomous agent that composes, plays, analyzes, and iterativel
 
 -   **Autonomous Composition:** Generates original MIDI loops based on user-specified styles (e.g., "synthwave", "jazz").
 -   **Iterative Refinement:** Mutates existing loops based on AI-driven analysis and feedback, improving musicality over time.
--   **Undertale SoundFont Integration:** Utilizes instruments from the Undertale SoundFont for a distinct sound.
 -   **Local Playback & Rendering:** Plays MIDI files directly and renders them to WAV using FluidSynth.
 -   **Agentic Workflow:** Streams agent thoughts, decisions, and actions to the terminal for transparency.
 -   **State Management:** Saves run history (MIDI, WAV, analysis) for traceability and potential warm restarts.
@@ -94,7 +93,8 @@ graph LR
 -   OpenAI API Key
 -   FluidSynth library installed system-wide
 -   SoundFont file (`.sf2`)
-
+-   brew install fluidsynth (to play the music)
+-   brew install lolcat (for colorful terminal animations)
 ## Development Notes
 
 -   **Error Handling:** The agent includes retry logic for LLM code generation errors.

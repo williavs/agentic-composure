@@ -11,3 +11,5 @@ openai-agents
 pydantic
 websocket-client
 soundfile 
+rich
+setuptools
