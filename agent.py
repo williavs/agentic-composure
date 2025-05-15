@@ -6,11 +6,10 @@ from ascii_art import print_welcome_animation
 def main():
     load_dotenv()
     api_key = os.getenv('OPENAI_API_KEY')
-    soundfont_path = os.getenv('SOUND_FONT_PATH')
-    if not soundfont_path:
-        soundfont_path = os.path.join('music', 'weedsgm3.sf2')
-    if not api_key or not soundfont_path:
-        print("Missing OPENAI_API_KEY or SOUND_FONT_PATH in environment.")
+    soundfont_path = 'music/weedsgm3.sf2'
+    
+    if not api_key:
+        print("Missing OPENAI_API_KEY in environment.")
         return
 
     # Print welcome animation

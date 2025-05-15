@@ -80,8 +80,7 @@ graph LR
     ```
     *   **`OPENAI_API_KEY`**: Your OpenAI API key.
     *   **`SOUND_FONT_PATH`**: Path to a SoundFont file (`.sf2`).
-        *   The agent is designed around the **Undertale SoundFont**. You can find versions online or place `undertale.sf2` in the `music/` directory (the agent defaults to this if the env var isn't set).
-        *   Alternatively, you can use a general-purpose SoundFont like [GeneralUser GS](https://schristiancollins.com/generaluser.php).
+        *   Download the sound path file I used here weedsgm3.sf2 - - - - [https://www.philscomputerlab.com/general-midi-and-soundfonts.html]).
 
 5.  **Run the agent:**
     ```bash

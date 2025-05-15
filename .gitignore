@@ -4,8 +4,8 @@ __pycache__/
 *$py.class
 
 # C extensions
-*.so
-
+*.so*
+music/weedsgm3.sf2
 # Distribution / packaging
 .Python
 build/
