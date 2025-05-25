@@ -1,0 +1,486 @@
+[ ![logo](../../assets/logo.svg) ](../.. "OpenAI Agents SDK") OpenAI Agents SDK 
+
+[ openai-agents-python  ](https://github.com/openai/openai-agents-python "Go to repository")
+
+  * [ Intro  ](../..)
+  * [ Quickstart  ](../../quickstart/)
+  * [ Examples  ](../../examples/)
+  * Documentation  Documentation 
+    * [ Agents  ](../../agents/)
+    * [ Running agents  ](../../running_agents/)
+    * [ Results  ](../../results/)
+    * [ Streaming  ](../../streaming/)
+    * [ Tools  ](../../tools/)
+    * [ Model context protocol (MCP)  ](../../mcp/)
+    * [ Handoffs  ](../../handoffs/)
+    * [ Tracing  ](../../tracing/)
+    * [ Context management  ](../../context/)
+    * [ Guardrails  ](../../guardrails/)
+    * [ Orchestrating multiple agents  ](../../multi_agent/)
+    * Models  Models 
+      * [ Models  ](../../models/)
+      * [ Using any model via LiteLLM  ](../../models/litellm/)
+    * [ Configuring the SDK  ](../../config/)
+    * [ Agent Visualization  ](../../visualization/)
+    * Voice agents  Voice agents 
+      * [ Quickstart  ](../../voice/quickstart/)
+      * [ Pipelines and workflows  ](../../voice/pipeline/)
+      * [ Tracing  ](../../voice/tracing/)
+  * API Reference  API Reference 
+    * Agents  Agents 
+      * [ Agents module  ](../)
+      * [ Agents  ](../agent/)
+      * [ Runner  ](../run/)
+      * [ Tools  ](../tool/)
+      * [ Results  ](../result/)
+      * [ Streaming events  ](../stream_events/)
+      * [ Handoffs  ](../handoffs/)
+      * [ Lifecycle  ](../lifecycle/)
+      * [ Items  ](../items/)
+      * [ Run context  ](../run_context/)
+      * [ Usage  ](../usage/)
+      * [ Exceptions  ](../exceptions/)
+      * [ Guardrails  ](../guardrail/)
+      * Model settings  [ Model settings  ](./) Table of contents 
+        * model_settings 
+        * ModelSettings 
+          * temperature 
+          * top_p 
+          * frequency_penalty 
+          * presence_penalty 
+          * tool_choice 
+          * parallel_tool_calls 
+          * truncation 
+          * max_tokens 
+          * reasoning 
+          * metadata 
+          * store 
+          * include_usage 
+          * extra_query 
+          * extra_body 
+          * extra_headers 
+          * resolve 
+      * [ Agent output  ](../agent_output/)
+      * [ Function schema  ](../function_schema/)
+      * [ Model interface  ](../models/interface/)
+      * [ OpenAI Chat Completions model  ](../models/openai_chatcompletions/)
+      * [ OpenAI Responses model  ](../models/openai_responses/)
+      * [ MCP Servers  ](../mcp/server/)
+      * [ MCP Util  ](../mcp/util/)
+    * Tracing  Tracing 
+      * [ Tracing module  ](../tracing/)
+      * [ Creating traces/spans  ](../tracing/create/)
+      * [ Traces  ](../tracing/traces/)
+      * [ Spans  ](../tracing/spans/)
+      * [ Processor interface  ](../tracing/processor_interface/)
+      * [ Processors  ](../tracing/processors/)
+      * [ Scope  ](../tracing/scope/)
+      * [ Setup  ](../tracing/setup/)
+      * [ Span data  ](../tracing/span_data/)
+      * [ Util  ](../tracing/util/)
+    * Voice  Voice 
+      * [ Pipeline  ](../voice/pipeline/)
+      * [ Workflow  ](../voice/workflow/)
+      * [ Input  ](../voice/input/)
+      * [ Result  ](../voice/result/)
+      * [ Pipeline Config  ](../voice/pipeline_config/)
+      * [ Events  ](../voice/events/)
+      * [ Exceptions  ](../voice/exceptions/)
+      * [ Model  ](../voice/model/)
+      * [ Utils  ](../voice/utils/)
+      * [ OpenAIVoiceModelProvider  ](../voice/models/openai_provider/)
+      * [ OpenAI STT  ](../voice/models/openai_stt/)
+      * [ OpenAI TTS  ](../voice/models/openai_tts/)
+    * Extensions  Extensions 
+      * [ Handoff filters  ](../extensions/handoff_filters/)
+      * [ Handoff prompt  ](../extensions/handoff_prompt/)
+      * [ LiteLLM Models  ](../extensions/litellm/)
+
+
+
+Table of contents 
+
+  * model_settings 
+  * ModelSettings 
+    * temperature 
+    * top_p 
+    * frequency_penalty 
+    * presence_penalty 
+    * tool_choice 
+    * parallel_tool_calls 
+    * truncation 
+    * max_tokens 
+    * reasoning 
+    * metadata 
+    * store 
+    * include_usage 
+    * extra_query 
+    * extra_body 
+    * extra_headers 
+    * resolve 
+
+
+
+# `Model settings`
+
+###  ModelSettings `dataclass`
+
+Settings to use when calling an LLM.
+
+This class holds optional model configuration parameters (e.g. temperature, top_p, penalties, truncation, etc.).
+
+Not all models/providers support all of these parameters, so please check the API documentation for the specific model and provider you are using.
+
+Source code in `src/agents/model_settings.py`
+    
+    
+     12
+     13
+     14
+     15
+     16
+     17
+     18
+     19
+     20
+     21
+     22
+     23
+     24
+     25
+     26
+     27
+     28
+     29
+     30
+     31
+     32
+     33
+     34
+     35
+     36
+     37
+     38
+     39
+     40
+     41
+     42
+     43
+     44
+     45
+     46
+     47
+     48
+     49
+     50
+     51
+     52
+     53
+     54
+     55
+     56
+     57
+     58
+     59
+     60
+     61
+     62
+     63
+     64
+     65
+     66
+     67
+     68
+     69
+     70
+     71
+     72
+     73
+     74
+     75
+     76
+     77
+     78
+     79
+     80
+     81
+     82
+     83
+     84
+     85
+     86
+     87
+     88
+     89
+     90
+     91
+     92
+     93
+     94
+     95
+     96
+     97
+     98
+     99
+    100
+
+| 
+    
+    
+    @dataclass
+    class ModelSettings:
+        """Settings to use when calling an LLM.
+    
+        This class holds optional model configuration parameters (e.g. temperature,
+        top_p, penalties, truncation, etc.).
+    
+        Not all models/providers support all of these parameters, so please check the API documentation
+        for the specific model and provider you are using.
+        """
+    
+        temperature: float | None = None
+        """The temperature to use when calling the model."""
+    
+        top_p: float | None = None
+        """The top_p to use when calling the model."""
+    
+        frequency_penalty: float | None = None
+        """The frequency penalty to use when calling the model."""
+    
+        presence_penalty: float | None = None
+        """The presence penalty to use when calling the model."""
+    
+        tool_choice: Literal["auto", "required", "none"] | str | None = None
+        """The tool choice to use when calling the model."""
+    
+        parallel_tool_calls: bool | None = None
+        """Whether to use parallel tool calls when calling the model.
+        Defaults to False if not provided."""
+    
+        truncation: Literal["auto", "disabled"] | None = None
+        """The truncation strategy to use when calling the model."""
+    
+        max_tokens: int | None = None
+        """The maximum number of output tokens to generate."""
+    
+        reasoning: Reasoning | None = None
+        """Configuration options for
+        [reasoning models](https://platform.openai.com/docs/guides/reasoning).
+        """
+    
+        metadata: dict[str, str] | None = None
+        """Metadata to include with the model response call."""
+    
+        store: bool | None = None
+        """Whether to store the generated model response for later retrieval.
+        Defaults to True if not provided."""
+    
+        include_usage: bool | None = None
+        """Whether to include usage chunk.
+        Defaults to True if not provided."""
+    
+        extra_query: Query | None = None
+        """Additional query fields to provide with the request.
+        Defaults to None if not provided."""
+    
+        extra_body: Body | None = None
+        """Additional body fields to provide with the request.
+        Defaults to None if not provided."""
+    
+        extra_headers: Headers | None = None
+        """Additional headers to provide with the request.
+        Defaults to None if not provided."""
+    
+        def resolve(self, override: ModelSettings | None) -> ModelSettings:
+            """Produce a new ModelSettings by overlaying any non-None values from the
+            override on top of this instance."""
+            if override is None:
+                return self
+    
+            changes = {
+                field.name: getattr(override, field.name)
+                for field in fields(self)
+                if getattr(override, field.name) is not None
+            }
+            return replace(self, **changes)
+    
+        def to_json_dict(self) -> dict[str, Any]:
+            dataclass_dict = dataclasses.asdict(self)
+    
+            json_dict: dict[str, Any] = {}
+    
+            for field_name, value in dataclass_dict.items():
+                if isinstance(value, BaseModel):
+                    json_dict[field_name] = value.model_dump(mode="json")
+                else:
+                    json_dict[field_name] = value
+    
+            return json_dict
+      
+  
+---|---  
+  
+####  temperature `class-attribute` `instance-attribute`
+    
+    
+    temperature: float | None = None
+    
+
+The temperature to use when calling the model.
+
+####  top_p `class-attribute` `instance-attribute`
+    
+    
+    top_p: float | None = None
+    
+
+The top_p to use when calling the model.
+
+####  frequency_penalty `class-attribute` `instance-attribute`
+    
+    
+    frequency_penalty: float | None = None
+    
+
+The frequency penalty to use when calling the model.
+
+####  presence_penalty `class-attribute` `instance-attribute`
+    
+    
+    presence_penalty: float | None = None
+    
+
+The presence penalty to use when calling the model.
+
+####  tool_choice `class-attribute` `instance-attribute`
+    
+    
+    tool_choice: (
+        Literal["auto", "required", "none"] | str | None
+    ) = None
+    
+
+The tool choice to use when calling the model.
+
+####  parallel_tool_calls `class-attribute` `instance-attribute`
+    
+    
+    parallel_tool_calls: bool | None = None
+    
+
+Whether to use parallel tool calls when calling the model. Defaults to False if not provided.
+
+####  truncation `class-attribute` `instance-attribute`
+    
+    
+    truncation: Literal['auto', 'disabled'] | None = None
+    
+
+The truncation strategy to use when calling the model.
+
+####  max_tokens `class-attribute` `instance-attribute`
+    
+    
+    max_tokens: int | None = None
+    
+
+The maximum number of output tokens to generate.
+
+####  reasoning `class-attribute` `instance-attribute`
+    
+    
+    reasoning: Reasoning | None = None
+    
+
+Configuration options for [reasoning models](https://platform.openai.com/docs/guides/reasoning).
+
+####  metadata `class-attribute` `instance-attribute`
+    
+    
+    metadata: dict[str, str] | None = None
+    
+
+Metadata to include with the model response call.
+
+####  store `class-attribute` `instance-attribute`
+    
+    
+    store: bool | None = None
+    
+
+Whether to store the generated model response for later retrieval. Defaults to True if not provided.
+
+####  include_usage `class-attribute` `instance-attribute`
+    
+    
+    include_usage: bool | None = None
+    
+
+Whether to include usage chunk. Defaults to True if not provided.
+
+####  extra_query `class-attribute` `instance-attribute`
+    
+    
+    extra_query: Query | None = None
+    
+
+Additional query fields to provide with the request. Defaults to None if not provided.
+
+####  extra_body `class-attribute` `instance-attribute`
+    
+    
+    extra_body: Body | None = None
+    
+
+Additional body fields to provide with the request. Defaults to None if not provided.
+
+####  extra_headers `class-attribute` `instance-attribute`
+    
+    
+    extra_headers: Headers | None = None
+    
+
+Additional headers to provide with the request. Defaults to None if not provided.
+
+####  resolve
+    
+    
+    resolve(override: ModelSettings | None) -> ModelSettings
+    
+
+Produce a new ModelSettings by overlaying any non-None values from the override on top of this instance.
+
+Source code in `src/agents/model_settings.py`
+    
+    
+    76
+    77
+    78
+    79
+    80
+    81
+    82
+    83
+    84
+    85
+    86
+    87
+
+| 
+    
+    
+    def resolve(self, override: ModelSettings | None) -> ModelSettings:
+        """Produce a new ModelSettings by overlaying any non-None values from the
+        override on top of this instance."""
+        if override is None:
+            return self
+    
+        changes = {
+            field.name: getattr(override, field.name)
+            for field in fields(self)
+            if getattr(override, field.name) is not None
+        }
+        return replace(self, **changes)
+      
+  
+---|---
