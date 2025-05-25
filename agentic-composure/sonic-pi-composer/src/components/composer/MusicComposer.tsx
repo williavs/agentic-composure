@@ -104,7 +104,7 @@ export function MusicComposer({ initialCode }: MusicComposerProps) {
       // Clear the localStorage value
       localStorage.removeItem('quickCreateCode');
     }
-  }, [initialCodeValue, isPlaying, currentCodeValue, editingCode]);
+  }, [initialCodeValue, isPlaying, currentCodeValue]);
 
   const handleSelectPrompt = (prompt: string, style: string) => {
     setCurrentPrompt(prompt);
@@ -129,7 +129,7 @@ export function MusicComposer({ initialCode }: MusicComposerProps) {
 
   // Handle successful play of edited track (clears editing flag and syncs states)
   const handleEditedTrackPlayed = () => {
-    setEditingCode(editingCode); // Sync generated code with applied edits
+    setEditingCode(currentCode); // Sync with what's actually playing
     setIsUserEditing(false); // User changes have been applied
   };
 

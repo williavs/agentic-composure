@@ -30,7 +30,7 @@ export default function SequencerPage() {
         setIsCodeEditorOpen(true); // Expand when showing active code
       }
     }
-  }, [currentCode, editingCode, isPlaying]);
+  }, [currentCode, isPlaying]);
 
   // Use currently playing code or fallback to editing code
   const activeCode = (isPlaying && currentCode) ? currentCode : editingCode;
@@ -65,6 +65,7 @@ export default function SequencerPage() {
 
   // Handle successful play of edited track
   const handleEditedTrackPlayed = () => {
+    setEditingCode(currentCode); // Sync with what's actually playing
     setIsUserEditing(false); // User changes have been applied
   };
 
