@@ -43,7 +43,7 @@ export default function Home() {
             Generate and play beautiful music using AI-powered Sonic Pi code generation. 
             From ambient soundscapes to driving techno beats - describe your music in natural language and watch AI create it instantly.
           </p>
-
+          
           {/* Production Notice */}
           <Alert className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/20 text-left max-w-2xl mx-auto">
             <Info className="h-4 w-4 text-blue-600" />
