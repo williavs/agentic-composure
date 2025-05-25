@@ -7,7 +7,8 @@ import { useState, useTransition, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Play, Square } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Play, Square, AlertTriangle, ExternalLink } from 'lucide-react';
 import { useNowPlaying } from '@/contexts/NowPlayingContext';
 
 interface PlaybackControlsProps {
@@ -18,13 +19,41 @@ interface PlaybackControlsProps {
 export function PlaybackControls({ code, autoPlay = false }: PlaybackControlsProps) {
   const [status, setStatus] = useState("Ready");
   const [isPending, startTransition] = useTransition();
+  const [isProductionEnv, setIsProductionEnv] = useState(false);
+  const [productionMessage, setProductionMessage] = useState<string>("");
   const lastCodeRef = useRef<string>("");
   const { isPlaying, setPlayingCode, stopPlaying, generationStatus, currentCode, startTrackLoading } = useNowPlaying();
+
+  // Check if we're in a production environment on component mount
+  useEffect(() => {
+    const checkEnvironment = async () => {
+      try {
+        const response = await fetch("/api/play");
+        const result = await response.json();
+        
+        if (result.isProduction) {
+          setIsProductionEnv(true);
+          setProductionMessage(result.message);
+          setStatus('Production Environment - Sonic Pi Required Locally');
+        }
+      } catch (error) {
+        // If the check fails, assume we can try to play
+        console.log('Environment check failed, assuming local environment');
+      }
+    };
+    
+    checkEnvironment();
+  }, []);
 
   // Handle play button click
   const handlePlay = useCallback(async () => {
     if (!code.trim()) {
       setStatus('No code to play');
+      return;
+    }
+
+    if (isProductionEnv) {
+      setStatus('❌ Sonic Pi required locally');
       return;
     }
 
@@ -37,11 +66,21 @@ export function PlaybackControls({ code, autoPlay = false }: PlaybackControlsPro
           await fetch("/api/play", { method: "DELETE" });
         }
         
-        const result = await fetch("/api/play", {
+        const response = await fetch("/api/play", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ code }),
-        }).then((res) => res.json());
+        });
+        
+        const result = await response.json();
+        
+        // Handle production environment response
+        if (result.isProduction) {
+          setIsProductionEnv(true);
+          setProductionMessage(result.message);
+          setStatus('❌ Production Environment - Sonic Pi Required Locally');
+          return;
+        }
         
         if (result.success) {
           setStatus('✅ Playing!');
@@ -53,9 +92,9 @@ export function PlaybackControls({ code, autoPlay = false }: PlaybackControlsPro
         setStatus(`❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
     });
-  }, [code, autoPlay, isPlaying, setPlayingCode, startTrackLoading]);
+  }, [code, autoPlay, isPlaying, setPlayingCode, startTrackLoading, isProductionEnv]);
 
-  // Auto-play when new code is received
+  // Auto-play when new code is received (but not in production)
   useEffect(() => {
     if (
       autoPlay && 
@@ -63,15 +102,21 @@ export function PlaybackControls({ code, autoPlay = false }: PlaybackControlsPro
       code !== lastCodeRef.current && 
       code.trim() && 
       generationStatus === 'idle' &&
-      code !== currentCode // Don't auto-play if this code is already playing
+      code !== currentCode && // Don't auto-play if this code is already playing
+      !isProductionEnv // Don't auto-play in production
     ) {
       lastCodeRef.current = code;
       handlePlay();
     }
-  }, [code, autoPlay, generationStatus, handlePlay, currentCode]);
+  }, [code, autoPlay, generationStatus, handlePlay, currentCode, isProductionEnv]);
 
   // Handle stop button click
   const handleStop = async () => {
+    if (isProductionEnv) {
+      setStatus('❌ Sonic Pi required locally');
+      return;
+    }
+
     setStatus('Stopping...');
     startTransition(async () => {
       try {
@@ -100,7 +145,33 @@ export function PlaybackControls({ code, autoPlay = false }: PlaybackControlsPro
 
   return (
     <div className="space-y-4">
-      {autoPlay && (
+      {/* Production Environment Warning */}
+      {isProductionEnv && (
+        <Alert className="border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/20">
+          <AlertTriangle className="h-4 w-4 text-amber-600" />
+          <AlertDescription className="text-amber-800 dark:text-amber-200">
+            <div className="space-y-2">
+              <p className="font-medium">Sonic Pi Required Locally</p>
+              <p className="text-sm">This app needs Sonic Pi running on your local machine. It cannot play music from remote servers.</p>
+              <div className="flex flex-wrap gap-2 mt-2">
+                <Button asChild variant="outline" size="sm" className="h-8 text-xs">
+                  <a href="https://sonic-pi.net" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1">
+                    <ExternalLink className="h-3 w-3" />
+                    Download Sonic Pi
+                  </a>
+                </Button>
+                <Button asChild variant="outline" size="sm" className="h-8 text-xs">
+                  <a href="/dashboard/docs" className="flex items-center gap-1">
+                    Setup Guide
+                  </a>
+                </Button>
+              </div>
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {autoPlay && !isProductionEnv && (
         <Card>
           <CardContent className="p-4">
             <Badge variant="secondary" className="text-sm">
@@ -113,7 +184,7 @@ export function PlaybackControls({ code, autoPlay = false }: PlaybackControlsPro
       <div className="flex items-center space-x-3">
         <Button
           onClick={handlePlay}
-          disabled={isPending || !code.trim() || isPlaying}
+          disabled={isPending || !code.trim() || isPlaying || isProductionEnv}
           size="lg"
           className="flex items-center gap-2"
         >
@@ -123,7 +194,7 @@ export function PlaybackControls({ code, autoPlay = false }: PlaybackControlsPro
         
         <Button
           onClick={handleStop}
-          disabled={isPending || !isPlaying}
+          disabled={isPending || !isPlaying || isProductionEnv}
           variant="destructive"
           size="lg"
           className="flex items-center gap-2"
