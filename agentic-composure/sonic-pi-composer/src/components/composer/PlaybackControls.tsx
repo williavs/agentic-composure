@@ -20,7 +20,6 @@ export function PlaybackControls({ code, autoPlay = false }: PlaybackControlsPro
   const [status, setStatus] = useState("Ready");
   const [isPending, startTransition] = useTransition();
   const [isProductionEnv, setIsProductionEnv] = useState(false);
-  const [productionMessage, setProductionMessage] = useState<string>("");
   const lastCodeRef = useRef<string>("");
   const { isPlaying, setPlayingCode, stopPlaying, generationStatus, currentCode, startTrackLoading } = useNowPlaying();
 
@@ -33,10 +32,9 @@ export function PlaybackControls({ code, autoPlay = false }: PlaybackControlsPro
         
         if (result.isProduction) {
           setIsProductionEnv(true);
-          setProductionMessage(result.message);
           setStatus('Production Environment - Sonic Pi Required Locally');
         }
-      } catch (error) {
+      } catch {
         // If the check fails, assume we can try to play
         console.log('Environment check failed, assuming local environment');
       }
@@ -77,7 +75,6 @@ export function PlaybackControls({ code, autoPlay = false }: PlaybackControlsPro
         // Handle production environment response
         if (result.isProduction) {
           setIsProductionEnv(true);
-          setProductionMessage(result.message);
           setStatus('❌ Production Environment - Sonic Pi Required Locally');
           return;
         }
