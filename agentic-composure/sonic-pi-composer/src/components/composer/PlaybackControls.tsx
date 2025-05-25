@@ -158,6 +158,12 @@ export function PlaybackControls({ code, autoPlay = false }: PlaybackControlsPro
                   </a>
                 </Button>
                 <Button asChild variant="outline" size="sm" className="h-8 text-xs">
+                  <a href="https://github.com/williavs/agentic-composure" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1">
+                    <ExternalLink className="h-3 w-3" />
+                    GitHub Repo
+                  </a>
+                </Button>
+                <Button asChild variant="outline" size="sm" className="h-8 text-xs">
                   <a href="/dashboard/docs" className="flex items-center gap-1">
                     Setup Guide
                   </a>

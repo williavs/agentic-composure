@@ -1,192 +1,210 @@
-# Sonic Pi AI Composer - Next.js
+# 🎵 Sonic Pi Composer
 
-A modern Next.js application for generating and executing Sonic Pi music code with AI, migrated from Python/Streamlit architecture.
+An AI-powered web application for generating and playing music using Sonic Pi. Describe your music in natural language and watch AI create beautiful Sonic Pi code that plays instantly.
 
-## 🎵 Features
+![Sonic Pi Composer](https://img.shields.io/badge/Sonic%20Pi-AI%20Composer-blue)
+![Next.js](https://img.shields.io/badge/Next.js-15.1.8-black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
 
-- **AI-Powered Music Generation**: Natural language to Sonic Pi code using GPT-4
-- **Real-time Code Execution**: Direct integration with Sonic Pi server
-- **Example Library**: Categorized collection of proven Sonic Pi patterns
-- **Modern UI**: Built with Next.js, TypeScript, and shadcn/ui components
-- **Generation History**: Save and replay your AI-generated music
-- **Professional Prompt Engineering**: Validated syntax and musical structure
+## ✨ Features
 
-## 🏗️ Architecture
-
-```
-[Next.js Frontend + shadcn/ui] → [Next.js API Routes] → [Node.js Sonic Pi Service] → [Sonic Pi Server] → [Audio Output]
-```
+- **🤖 AI Music Generation**: Describe music in natural language ("chill lofi beats", "driving techno") and get valid Sonic Pi code
+- **🎮 Instant Playback**: Generated code automatically plays in your local Sonic Pi installation
+- **📊 Live Visualizer**: Real-time visualization of beats, loops, and music structure with fullscreen mode
+- **💻 Code Editor**: Syntax-highlighted editor for fine-tuning generated Sonic Pi code
+- **🎛️ Interactive Sequencer**: Visual sequencer with beat tracking and loop management
+- **📚 Built-in Examples**: Curated collection of Sonic Pi patterns and techniques
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-1. **Sonic Pi Application** - Download and install from [sonic-pi.net](https://sonic-pi.net/)
-2. **Node.js 18+** - For Next.js development
-3. **OpenAI API Key** - For AI code generation
+1. **Sonic Pi** - Download and install from [sonic-pi.net](https://sonic-pi.net)
+2. **Node.js** - Version 18 or higher
+3. **Modern web browser** - Chrome, Firefox, Safari, or Edge
 
 ### Installation
 
-1. **Clone and Install**
+1. **Clone the repository**
    ```bash
-   cd sonic-pi-composer
-   npm install
+   git clone https://github.com/williavs/agentic-composure.git
+   cd agentic-composure/sonic-pi-composer
    ```
 
-2. **Environment Setup**
+2. **Install dependencies**
+   ```bash
+   npm install --legacy-peer-deps
+   ```
+
+3. **Set up environment variables**
    ```bash
    cp .env.example .env.local
-   # Edit .env.local with your OpenAI API key
+   # Add your OpenAI API key to .env.local
    ```
 
-3. **Start Sonic Pi**
-   - Launch Sonic Pi application
-   - Ensure it's running on localhost:4560 (default)
-   - Wait for full initialization (8 seconds required)
+4. **Launch Sonic Pi**
+   - Open Sonic Pi application
+   - Ensure it's running and ready to receive code
 
-4. **Start Development Server**
+5. **Start the development server**
    ```bash
    npm run dev
    ```
 
-5. **Open Application**
-   Visit [http://localhost:3000](http://localhost:3000)
+6. **Open your browser**
+   - Navigate to [http://localhost:3000](http://localhost:3000)
+   - Start creating music!
 
-## 📁 Project Structure
+## 🎯 Usage
 
+### AI Composer
+1. Navigate to **Dashboard > Compose**
+2. Describe your desired music style in the prompt field
+3. Click **Generate** to create Sonic Pi code
+4. The code will automatically play in Sonic Pi (if auto-play is enabled)
+5. Edit the generated code in the built-in editor
+6. Use **Play/Stop** controls to test your music
+
+### Live Sequencer
+1. Go to **Dashboard > Sequencer**
+2. Write or paste Sonic Pi code in the editor
+3. Watch the real-time visualizer show beats and loops
+4. Click the **fullscreen** button for an immersive visualization experience
+5. Use the sequencer controls to manage playback
+
+### Example Prompts
+- "Create a chill lofi hip hop beat with vinyl crackle"
+- "Generate an upbeat techno track with acid bass"
+- "Make ambient soundscape with reverb and delay"
+- "Create a drum and bass pattern with breakbeats"
+
+## 🏗️ Architecture
+
+### Tech Stack
+- **Frontend**: Next.js 15, React, TypeScript, Tailwind CSS
+- **UI Components**: shadcn/ui, Lucide React icons
+- **Sonic Pi Integration**: @sunderb/sonic-pi-js-api
+- **AI**: OpenAI GPT models for code generation
+- **Real-time**: OSC (Open Sound Control) for beat tracking
+
+### Project Structure
 ```
 src/
-├── app/
-│   ├── (dashboard)/           # Main application routes
-│   │   ├── page.tsx          # AI Composer interface
-│   │   ├── examples/         # Example library
-│   │   └── history/          # Generation history
-│   ├── api/                  # Next.js API routes
-│   │   ├── generate/         # AI code generation
-│   │   ├── play/             # Sonic Pi execution
-│   │   └── examples/         # Example management
-│   └── layout.tsx            # Root layout
-├── components/
-│   ├── ui/                   # shadcn/ui components
-│   ├── composer/             # AI composer components
-│   ├── examples/             # Example browser components
-│   └── layout/               # Layout components
-├── lib/
-│   ├── sonic-pi/             # Sonic Pi integration
-│   ├── ai/                   # OpenAI integration
-│   └── utils/                # Utility functions
-└── services/
-    └── sonic-pi-bridge.js    # Node.js Sonic Pi bridge
+├── app/                    # Next.js app router
+│   ├── api/               # API routes (play, generate, etc.)
+│   ├── dashboard/         # Main application pages
+│   └── page.tsx          # Landing page
+├── components/            # React components
+│   ├── composer/         # AI composer components
+│   ├── sequencer/        # Sequencer and visualizer
+│   └── ui/              # Reusable UI components
+├── contexts/             # React contexts (NowPlaying, etc.)
+├── lib/                  # Utilities and configurations
+└── services/             # Sonic Pi bridge service
 ```
 
-## 🔧 Development Status
+## 🔧 Configuration
 
-This project is currently scaffolded with the complete file structure. Implementation phases:
-
-### ✅ Phase 1: Foundation (Completed)
-- [x] Next.js project setup with TypeScript
-- [x] shadcn/ui integration and configuration
-- [x] Complete file structure scaffolding
-- [x] Environment configuration
-- [x] Dependency management
-
-### 🚧 Phase 2: Core Services (In Progress)
-- [ ] Convert AI prompts from Python (`prompts.py` → `lib/ai/prompts.ts`)
-- [ ] Implement OpenAI integration (`lib/ai/generation.ts`)
-- [ ] Refactor Node.js Sonic Pi bridge (`services/sonic-pi-bridge.js`)
-- [ ] Create API routes (`app/api/*/route.ts`)
-
-### 📋 Phase 3: Frontend Components (Planned)
-- [ ] AI Prompt Input component
-- [ ] Monaco Code Editor with Sonic Pi syntax
-- [ ] Playback Controls with status indicators
-- [ ] Generation History management
-- [ ] Example Library browser
-
-### 📋 Phase 4: Integration (Planned)
-- [ ] Connect frontend to API routes
-- [ ] Implement state management
-- [ ] Add error handling and validation
-- [ ] Test end-to-end functionality
-
-### 📋 Phase 5: Polish (Planned)
-- [ ] Mobile responsive design
-- [ ] Performance optimization
-- [ ] Deployment configuration
-- [ ] Documentation completion
-
-## 🔌 Integration Points
-
-### Sonic Pi Bridge Service
-The core integration maintains the critical 8-second audio initialization requirement:
-
-```javascript
-// services/sonic-pi-bridge.js
-class SonicPiBridge {
-  async initialize() {
-    await this.waitForSonicPi(8000); // Critical timing requirement
-    this.isInitialized = true;
-  }
-}
-```
-
-### AI Generation Flow
-```
-User Input → API Route → OpenAI → Validation → Response
-```
-
-### Audio Execution Flow
-```
-Generated Code → Validation → Sonic Pi Bridge → Audio Output
-```
-
-## 🛠️ Migration Notes
-
-This project migrates from:
-- **Python/Streamlit** → **Next.js/TypeScript**
-- **Hardcoded UI** → **shadcn/ui Components**
-- **Monolithic Structure** → **API Routes + Components**
-- **Python AI Logic** → **TypeScript AI Integration**
-
-Key files being converted:
-- `streamlit_sonic_pi_ai.py` (351 lines) → React components
-- `prompts.py` (218 lines) → TypeScript modules
-- `enhanced_sonic_pi_ai.js` (587 lines) → Refactored service
-
-## 🔒 Environment Variables
-
-Required in `.env.local`:
+### Environment Variables
+Create a `.env.local` file with:
 
 ```env
-OPENAI_API_KEY=sk-your-key-here
-SONIC_PI_PATH=/Applications/Sonic Pi.app/Contents/Resources
-SONIC_PI_HOST=localhost
-SONIC_PI_PORT=4560
+# OpenAI API Key (required for AI generation)
+OPENAI_API_KEY=your_openai_api_key_here
+
+# Optional: Customize AI model
+OPENAI_MODEL=gpt-4
+
+# Optional: Development settings
 NODE_ENV=development
-NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-## 🚨 Critical Requirements
+### Sonic Pi Setup
+- Ensure Sonic Pi is installed at the default location:
+  - **macOS**: `/Applications/Sonic Pi.app/Contents/Resources`
+  - **Windows**: `C:\Program Files\Sonic Pi\`
+  - **Linux**: `/usr/bin/sonic-pi`
 
-1. **Sonic Pi Must Be Running**: The application requires Sonic Pi to be launched and running
-2. **8-Second Initialization**: Audio system needs 8 seconds to initialize properly
-3. **OpenAI API Key**: Required for AI music generation
-4. **Port 4560**: Ensure Sonic Pi server is accessible on localhost:4560
+## 🌐 Deployment
 
-## 📚 Resources
+### Local Development
+This app is designed to work with a local Sonic Pi installation. For full functionality:
 
-- [Next.js Documentation](https://nextjs.org/docs)
-- [shadcn/ui Components](https://ui.shadcn.com/)
-- [Sonic Pi Documentation](https://sonic-pi.net/)
-- [OpenAI API Reference](https://platform.openai.com/docs)
+1. Run Sonic Pi locally
+2. Run the Next.js app locally (`npm run dev`)
+3. Access at `localhost:3000`
+
+### Production Deployment
+When deployed to hosting services (Vercel, Netlify, etc.), the app will:
+- Show helpful messages about requiring local Sonic Pi
+- Disable playback controls gracefully
+- Provide links to download Sonic Pi and clone the repo
+- Still allow code generation and editing
+
+## 🎼 Sonic Pi Integration
+
+This app uses the [sonic-pi-js-api](https://github.com/sunderb/sonic-pi-js-api) library to:
+- Send code to Sonic Pi for execution
+- Receive real-time cue events for beat tracking
+- Monitor playback status
+- Control volume and playback
+
+### Beat Tracking
+The visualizer tracks beats through:
+- OSC cue events from Sonic Pi
+- Live loop synchronization
+- Real-time beat counting
+- Visual feedback for rhythm patterns
 
 ## 🤝 Contributing
 
-1. Follow the existing file structure and naming conventions
-2. Add TODO comments for incomplete implementations
-3. Maintain TypeScript strict mode compliance
-4. Test with actual Sonic Pi integration before submitting
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **[Sonic Pi](https://sonic-pi.net)** - The incredible live coding music environment by Sam Aaron
+- **[sonic-pi-js-api](https://github.com/sunderb/sonic-pi-js-api)** - JavaScript API for Sonic Pi integration
+- **[shadcn/ui](https://ui.shadcn.com)** - Beautiful and accessible UI components
+- **[OpenAI](https://openai.com)** - AI models for music code generation
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**"Failed to start Sonic Pi server"**
+- Ensure Sonic Pi is installed and at the correct path
+- Try restarting Sonic Pi
+- Check that no other applications are using the OSC ports
+
+**"No audio output"**
+- Verify your audio device is working
+- Check Sonic Pi's audio settings
+- Ensure volume is turned up in both Sonic Pi and your system
+
+**"Code generation fails"**
+- Check your OpenAI API key in `.env.local`
+- Verify you have API credits available
+- Try a simpler prompt
+
+**"Visualizer not updating"**
+- Ensure your Sonic Pi code includes `cue` commands or live loops
+- Check that OSC communication is working
+- Try restarting both applications
+
+### Getting Help
+
+- 📖 Check the [Sonic Pi documentation](https://sonic-pi.net/tutorial.html)
+- 💬 Join the [Sonic Pi community](https://in-thread.sonic-pi.net/)
+- 🐛 Report issues on [GitHub](https://github.com/williavs/agentic-composure/issues)
 
 ---
 
-*This Next.js application preserves all functionality from the original Python/Streamlit version while providing a modern, scalable architecture for future enhancements.*
+**Made with ❤️ for the Sonic Pi community**

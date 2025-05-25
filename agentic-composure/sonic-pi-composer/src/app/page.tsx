@@ -11,6 +11,20 @@ import Link from "next/link";
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+      {/* Example UI Notice */}
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+        <div className="container mx-auto px-4 py-3">
+          <div className="text-center">
+            <p className="text-sm font-medium">
+              ⚠️ <strong>Example UI Only</strong> - To actually use this application, you must run it locally and install Sonic Pi. 
+              <a href="https://github.com/williavs/agentic-composure" target="_blank" rel="noopener noreferrer" className="underline ml-1 hover:text-blue-200">
+                Get the code →
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-16 text-center">
         <div className="mx-auto max-w-3xl space-y-6">
@@ -180,14 +194,18 @@ export default function Home() {
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-amber-600 font-medium">2.</span>
-                      <span>Clone this repo and run locally: <code className="text-xs bg-amber-100 dark:bg-amber-900 px-1 rounded">npm run dev</code></span>
+                      <span>Clone this repo: <a href="https://github.com/williavs/agentic-composure" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">github.com/williavs/agentic-composure</a></span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-amber-600 font-medium">3.</span>
-                      <span>Access the app at <code className="text-xs bg-amber-100 dark:bg-amber-900 px-1 rounded">localhost:3000</code></span>
+                      <span>Run locally: <code className="text-xs bg-amber-100 dark:bg-amber-900 px-1 rounded">npm run dev</code></span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-amber-600 font-medium">4.</span>
+                      <span>Access at <code className="text-xs bg-amber-100 dark:bg-amber-900 px-1 rounded">localhost:3000</code></span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-amber-600 font-medium">5.</span>
                       <span>Start creating music with AI!</span>
                     </li>
                   </ol>

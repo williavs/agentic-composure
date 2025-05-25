@@ -1,107 +1,151 @@
-# Autonomous Music Agent 🎹✨
+# 🖥️ Terminal App - AI Music Agents
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+A Python-based terminal application for advanced AI music composition using intelligent agents and Sonic Pi integration.
 
-![Agent Mascot](image42.png)
+![Python](https://img.shields.io/badge/Python-3.11+-blue)
+![AI Agents](https://img.shields.io/badge/AI-Agents-green)
+![Sonic Pi](https://img.shields.io/badge/Sonic%20Pi-Integration-orange)
 
-A terminal-based autonomous agent that composes, plays, analyzes, and iteratively improves short MIDI loops using the OpenAI API, `pretty_midi`, and FluidSynth. T
+## 🚀 Features
 
-## Features
+- **🤖 AI Music Agents**: Intelligent agents for music composition and generation
+- **🗣️ Voice Integration**: Voice-controlled music creation and interaction
+- **🤝 Multi-Agent System**: Collaborative AI music composition
+- **📊 Advanced Analytics**: Detailed music generation analytics and insights
+- **🎵 Sonic Pi Integration**: Direct integration with Sonic Pi for audio output
+- **📝 Execution Logging**: Comprehensive logging of agent runs and outputs
 
--   **Autonomous Composition:** Generates original MIDI loops based on user-specified styles (e.g., "synthwave", "jazz").
--   **Iterative Refinement:** Mutates existing loops based on AI-driven analysis and feedback, improving musicality over time.
--   **Local Playback & Rendering:** Plays MIDI files directly and renders them to WAV using FluidSynth.
--   **Agentic Workflow:** Streams agent thoughts, decisions, and actions to the terminal for transparency.
--   **State Management:** Saves run history (MIDI, WAV, analysis) for traceability and potential warm restarts.
+## 🏗️ Project Structure
 
-## Architecture
-
-The system employs an agent-based architecture with distinct components responsible for specific tasks:
-
-```mermaid
-graph LR
-    A[agent.py CLI] --> B(MusicAgent Core);
-    B --> C{prompts.py};
-    B --> D[midi_writer.py MIDI Gen];
-    B --> E[midi_player.py Play/Render];
-    B --> F[criteria_agent.py Genre Criteria];
-    B --> G[state_manager.py Persistence];
-    B --> H[fancy_spinner.py UI];
+```
+terminal-app/
+├── music/                  # Music generation modules
+├── runs/                   # Agent execution logs and outputs
+├── venv/                   # Python virtual environment
+├── openai_agents_docs/     # OpenAI agents documentation
+├── new/                    # New experimental features
+└── README.md              # This documentation
 ```
 
--   **`agent.py`**: CLI entry point; loads environment variables, gets user input (style), and initiates the main agent loop.
--   **`music_agent.py`**: The core agent logic. Manages interaction with the OpenAI API (GPT-4.1), orchestrates the composition/mutation loop, handles state, and utilizes other components.
--   **`midi_writer.py`**: Contains tools (`pretty_midi` based) for generating new MIDI loops and applying mutations to existing ones based on agent instructions.
--   **`midi_player.py`**: Handles MIDI playback and rendering to WAV audio files using `pyfluidsynth`.
--   **`prompts.py`**: Centralized repository for all system prompts, tool descriptions, and few-shot examples used to guide the LLM, including detailed `pretty_midi` usage documentation.
--   **`criteria_agent.py`**: Uses an LLM call to generate genre-specific musical evaluation criteria.
--   **`state_manager.py`**: Simple JSON-based persistence for saving agent memory and run history.
--   **`fancy_spinner.py`**: Provides a visual spinner in the terminal during long operations (LLM calls, code execution).
+## 🚀 Quick Start
 
-## Workflow
+### Prerequisites
 
-1.  **Initialization:** The user provides a musical style.
-2.  **Composition:** The `MusicAgent` requests Python code from the LLM (using `compose_prompt_template`) to generate an initial MIDI loop in the desired style.
-3.  **Execution:** The generated code is executed, creating the first MIDI file (`loop_1.mid`).
-4.  **Playback & Rendering:** The MIDI is rendered to WAV (`loop_1.wav`) and played back.
-5.  **Analysis (Implicit/Realtime):** The agent analyzes the result (potentially using external feedback loops or internal criteria).
-6.  **Mutation:** The `MusicAgent` requests new Python code from the LLM (using `mutate_prompt_template`), providing the previous code, analysis feedback, and the goal (e.g., add a new instrument layer).
-7.  **Execution:** The mutation code is executed, loading the previous MIDI and saving a new version (`loop_N.mid`).
-8.  **Iteration:** Steps 4-7 repeat, iteratively refining the musical loop.
+1. **Python 3.11+** - Required for the application
+2. **Sonic Pi** - Download from [sonic-pi.net](https://sonic-pi.net)
+3. **OpenAI API Key** - For AI music generation
 
-## Setup
+### Installation
 
-1.  **Clone the repository:**
-    ```bash
-    git clone <repository_url>
-    cd autonomous-music-agent
-    ```
+1. **Navigate to the terminal app directory**
+   ```bash
+   cd agentic-composure/terminal-app
+   ```
 
-2.  **Create and activate a virtual environment:**
-    ```bash
-    python3 -m venv venv
-    source venv/bin/activate
-    # On Windows use `venv\Scripts\activate`
-    ```
+2. **Create and activate virtual environment**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
 
-3.  **Install dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-    *Note: `pyfluidsynth` might require `fluidsynth` to be installed on your system (`brew install fluidsynth` on macOS, `apt-get install fluidsynth` on Debian/Ubuntu).*
+3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-4.  **Set environment variables:** Create a `.env` file in the project root or export variables directly:
-    ```bash
-    # .env file content
-    OPENAI_API_KEY="sk-..."
-    SOUND_FONT_PATH="/path/to/your/soundfont.sf2"
-    ```
-    *   **`OPENAI_API_KEY`**: Your OpenAI API key.
-    *   **`SOUND_FONT_PATH`**: Path to a SoundFont file (`.sf2`).
-        *   Download the sound path file I used here weedsgm3.sf2 - - - - [https://www.philscomputerlab.com/general-midi-and-soundfonts.html]).
+4. **Set up environment variables**
+   ```bash
+   export OPENAI_API_KEY="your_openai_api_key_here"
+   ```
 
-5.  **Run the agent:**
-    ```bash
-    python agent.py
-    ```
-    You will be prompted to enter a music style.
+5. **Launch Sonic Pi**
+   - Open Sonic Pi application
+   - Ensure it's running and ready to receive code
 
-## Requirements
+6. **Run the application**
+   ```bash
+   python main.py
+   ```
 
--   Python 3.8+
--   OpenAI API Key
--   FluidSynth library installed system-wide
--   SoundFont file (`.sf2`)
--   brew install fluidsynth (to play the music)
--   brew install lolcat (for colorful terminal animations)
-## Development Notes
+## 🎯 Usage
 
--   **Error Handling:** The agent includes retry logic for LLM code generation errors.
--   **Code Execution:** Uses `exec()` to run AI-generated Python code within a controlled environment. Review generated code before execution if modifying the agent.
--   **State:** Run data is stored in the `runs/` directory, organized by timestamp.
--   **Prompts:** The core agent behavior is heavily influenced by the prompts in `prompts.py`.
+### Basic Music Generation
+```bash
+python main.py --agent music_composer --prompt "ambient techno"
+```
 
-## License
+### Voice-Controlled Generation
+```bash
+python main.py --voice --agent music_composer
+```
 
-This project is licensed under the MIT License. 
+### Multi-Agent Collaboration
+```bash
+python main.py --multi-agent --agents "composer,arranger,mixer"
+```
+
+## 📊 Agent Runs
+
+All agent executions are logged in the `runs/` directory with timestamps:
+- **Input prompts** and parameters
+- **Generated Sonic Pi code**
+- **Execution logs** and errors
+- **Performance metrics** and analytics
+
+## 🔧 Configuration
+
+### Environment Variables
+```env
+OPENAI_API_KEY=your_openai_api_key_here
+OPENAI_MODEL=gpt-4
+SONIC_PI_HOST=localhost
+SONIC_PI_PORT=4560
+```
+
+### Agent Configuration
+Agents can be configured through JSON configuration files in the project directory.
+
+## 🤝 Contributing
+
+This terminal app is part of the larger Agentic Composure project. See the main README for contribution guidelines.
+
+**[📖 Read the Main Project README →](../README.md)**
+
+## 📚 Documentation
+
+- **[Main Project README](../README.md)** - Overview of all projects
+- **[Sonic Pi Composer README](../sonic-pi-composer/README.md)** - Web application
+- **[OpenAI Agents Docs](./openai_agents_docs/)** - Agent framework documentation
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**Python Environment Issues**
+- Ensure Python 3.11+ is installed
+- Activate the virtual environment before running
+- Install all requirements with `pip install -r requirements.txt`
+
+**Sonic Pi Connection**
+- Verify Sonic Pi is running and initialized
+- Check that OSC ports 4560/4557 are available
+- Test connection with basic Sonic Pi commands
+
+**Agent Execution Errors**
+- Check OpenAI API key is set correctly
+- Verify API credit balance
+- Review logs in the `runs/` directory
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **[OpenAI Agents Framework](https://github.com/openai/openai-agents)** - Agent orchestration
+- **[Sonic Pi](https://sonic-pi.net)** - Music synthesis and live coding
+- **[Python](https://python.org)** - Programming language
+
+---
+
+**Part of the [Agentic Composure](../README.md) project** 
